@@ -861,6 +861,15 @@ body {
     border-width: 2px;
   }
 
+  /* === A MÁGICA PARA AS ILUSTRAÇÕES NÃO VAZAREM === */
+  .sticker-deco {
+    width: 28% !important; /* Força a ilustração a caber na página */
+    height: auto !important;
+  }
+  .sticker-deco img {
+    height: auto !important;
+  }
+
   /* Ajusta os enfeites da capa pro celular */
   .cover-page::after {
     inset: 15px;
