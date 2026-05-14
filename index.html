@@ -33,18 +33,13 @@ body {
   transition: background 0.6s ease;
 }
 
-/* Tema especial para página ESPECIAIS */
-body.special-theme {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-}
-
 #app {
   display: flex;
   gap: 20px;
   max-width: 1500px;
 }
 
-/* ==================== LIVRO 3D COM FLIPBOOK ==================== */
+/* ==================== LIVRO ==================== */
 #book {
   width: 1200px;
   height: 700px;
@@ -103,15 +98,9 @@ body.special-theme {
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
 }
 
-/* Animação de entrada da página */
-.page.page-enter {
-  opacity: 0;
-  transform: translateX(30px);
-}
-
-.page.page-enter-active {
-  opacity: 1;
-  transform: translateX(0);
+/* Fundo especial para página ESPECIAIS */
+.page.special-page-bg {
+  background: radial-gradient(circle, #1a1a2e 0%, #000 100%);
 }
 
 /* ==================== CAPA (PAGE 0) ==================== */
@@ -163,11 +152,16 @@ body.special-theme {
   letter-spacing: 0.02em;
 }
 
+.page.special-page-bg .page-title {
+  color: #ffd700;
+  text-shadow: 0 0 20px rgba(255,215,0,.5);
+}
+
 /* ==================== ILUSTRAÇÕES DECORATIVAS ==================== */
 .sticker-deco {
   position: absolute;
-  z-index: 8;
-  pointer-events: none;
+  z-index: 5; /* Sempre abaixo dos slots */
+  pointer-events: none; /* Não atrapalha cliques */
   filter: drop-shadow(2px 4px 8px rgba(0,0,0,.2));
   transition: transform 0.3s ease;
 }
@@ -179,16 +173,16 @@ body.special-theme {
   display: block;
 }
 
-/* ==================== SLOTS (ASPECT RATIO RIGOROSO) ==================== */
+/* ==================== SLOTS (ASPECT RATIO RIGOROSO 2:3) ==================== */
 .slots-container {
   position: absolute;
   inset: 0;
-  z-index: 10;
+  z-index: 10; /* Sempre acima das ilustrações */
 }
 
 .slot {
   position: absolute;
-  aspect-ratio: 2 / 3; /* Verticalidade total forçada */
+  aspect-ratio: 2 / 3; /* VERTICALIDADE TOTAL FORÇADA */
   background: #f5ebe0;
   border: 3px solid #e3d5c3;
   border-radius: 4px;
@@ -223,18 +217,20 @@ body.special-theme {
   border-color: #e8e8e8;
 }
 
-/* REGRA DOS 50% - Imagem ocupa 50% e flutua no centro */
+/* REGRA DOS 70% - Imagem ocupa 70% e flutua no centro */
 .slot.filled img {
-  width: 50%;
-  height: 50%;
+  width: 70%;
+  height: 70%;
   object-fit: contain;
 }
 
-/* Efeito holográfico para ESPECIAIS */
+/* EFEITO ESPECIAL DOURADO PARA PÁGINA ESPECIAIS */
 .slot.special.filled {
-  position: relative;
-  background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 50%, #aa771c 100%);
+  background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 45%, #b38728 70%, #fbf5b7 100%);
   border-color: #d4af37;
+  box-shadow: 
+    0 0 20px rgba(191,149,63,.6),
+    0 8px 30px rgba(0,0,0,.3);
 }
 
 .slot.special.filled::after {
@@ -244,8 +240,8 @@ body.special-theme {
   background: linear-gradient(135deg, 
     rgba(191,149,63,.4) 0%, 
     rgba(252,246,186,.2) 35%, 
-    rgba(170,119,28,.4) 70%,
-    rgba(191,149,63,.4) 100%
+    rgba(179,135,40,.4) 70%,
+    rgba(251,245,183,.2) 100%
   );
   background-size: 300% 300%;
   animation: shimmer-special 4s ease-in-out infinite;
@@ -444,7 +440,7 @@ body.special-theme {
   border-bottom-color: #059669;
 }
 
-/* ==================== ENVELOPE REDESENHADO (GACHA) ==================== */
+/* ==================== ENVELOPE (GACHA) ==================== */
 #pack-overlay {
   display: none;
   position: fixed;
@@ -775,10 +771,10 @@ body.special-theme {
 const SHEET_ID = '1KOgDq-gMhwOH_H9dPVrzTjGB86Is78hZ-0zNn4D6s7E';
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
-// Placeholder para imagens quebradas (ícone interrogação estilizado)
+// Placeholder para imagens quebradas
 const IMG_PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23f5ebe0' width='100' height='100'/%3E%3Ctext x='50' y='60' font-size='50' text-anchor='middle' fill='%23ccc'%3E%3F%3C/text%3E%3C/svg%3E";
 
-// ==================== PAGES - ORDEM LÓGICA REORGANIZADA ====================
+// ==================== PAGES - RECÁLCULO MANUAL DE COORDENADAS COM MARGEM DE SEGURANÇA 10% ====================
 const PAGES = [
   // CAPA (Page 0)
   {
@@ -786,165 +782,172 @@ const PAGES = [
     ids: [],
     isCover: true
   },
-  // COMENDO (1-4)
+  
+  // COMENDO (1-4) - Coordenadas recalculadas
   {
     name: 'COMENDO',
     ids: [1, 2, 3, 4],
     leftSlots: [
-      { id: 1, top: '20%', left: '8%', width: '22%' },
-      { id: 2, top: '56%', left: '8%', width: '20%' }
+      { id: 1, top: '18%', left: '8%', width: '25%' },
+      { id: 2, top: '62%', left: '8%', width: '22%' }
     ],
     rightSlots: [
-      { id: 3, top: '14%', left: '8%', width: '60%' },
-      { id: 4, top: '54%', left: '8%', width: '60%' }
+      { id: 3, top: '12%', left: '10%', width: '35%' },
+      { id: 4, top: '58%', left: '10%', width: '35%' }
     ],
     leftDecos: [
-      { img: '18.png', top: '20%', left: '54%', width: '185px' },
-      { img: '19.png', top: '68%', left: '14%', width: '180px' }
+      { img: '18.png', top: '15%', left: '50%', width: '180px' },
+      { img: '19.png', top: '70%', left: '45%', width: '170px' }
     ],
     rightDecos: [
-      { img: '20.png', top: '9%', left: '72%', width: '195px' },
-      { img: '21.png', top: '28%', left: '76%', width: '160px' },
-      { img: '22.png', top: '72%', left: '72%', width: '185px' }
+      { img: '20.png', top: '8%', left: '62%', width: '190px' },
+      { img: '21.png', top: '32%', left: '70%', width: '150px' },
+      { img: '22.png', top: '75%', left: '65%', width: '180px' }
     ]
   },
-  // BRINCANDO (5-9)
+  
+  // BRINCANDO (5-9) - Coordenadas recalculadas
   {
     name: 'BRINCANDO',
     ids: [5, 6, 7, 8, 9],
     leftSlots: [
-      { id: 5, top: '20%', left: '8%', width: '22%' },
-      { id: 6, top: '56%', left: '8%', width: '20%' }
+      { id: 5, top: '18%', left: '8%', width: '25%' },
+      { id: 6, top: '62%', left: '8%', width: '22%' }
     ],
     rightSlots: [
-      { id: 7, top: '14%', left: '8%', width: '28%' },
-      { id: 8, top: '14%', left: '40%', width: '26%' },
-      { id: 9, top: '54%', left: '8%', width: '60%' }
+      { id: 7, top: '12%', left: '10%', width: '24%' },
+      { id: 8, top: '12%', left: '50%', width: '22%' },
+      { id: 9, top: '58%', left: '10%', width: '35%' }
     ],
     leftDecos: [
-      { img: '9.png', top: '18%', left: '56%', width: '185px' },
-      { img: '8.png', top: '30%', left: '48%', width: '170px' },
-      { img: '10.png', top: '58%', left: '50%', width: '180px' },
-      { img: '11.png', top: '78%', left: '18%', width: '190px' }
+      { img: '9.png', top: '15%', left: '50%', width: '180px' },
+      { img: '8.png', top: '35%', left: '58%', width: '165px' },
+      { img: '10.png', top: '65%', left: '50%', width: '175px' },
+      { img: '11.png', top: '82%', left: '45%', width: '185px' }
     ],
     rightDecos: [
-      { img: '12.png', top: '10%', left: '12%', width: '180px' },
-      { img: '13.png', top: '28%', left: '75%', width: '170px' }
+      { img: '12.png', top: '8%', left: '5%', width: '175px' },
+      { img: '13.png', top: '32%', left: '70%', width: '165px' }
     ]
   },
-  // CUIDANDO (10-14)
+  
+  // CUIDANDO (10-14) - Coordenadas recalculadas
   {
     name: 'CUIDANDO',
     ids: [10, 11, 12, 13, 14],
     leftSlots: [
-      { id: 10, top: '20%', left: '8%', width: '22%' },
-      { id: 11, top: '56%', left: '8%', width: '20%' }
+      { id: 10, top: '18%', left: '8%', width: '25%' },
+      { id: 11, top: '62%', left: '8%', width: '22%' }
     ],
     rightSlots: [
-      { id: 12, top: '14%', left: '8%', width: '28%' },
-      { id: 13, top: '54%', left: '8%', width: '60%' },
-      { id: 14, top: '14%', left: '40%', width: '26%' }
+      { id: 12, top: '12%', left: '10%', width: '24%' },
+      { id: 13, top: '58%', left: '10%', width: '35%' },
+      { id: 14, top: '12%', left: '50%', width: '22%' }
     ],
     leftDecos: [
-      { img: '24.png', top: '20%', left: '58%', width: '185px' },
-      { img: '23.png', top: '68%', left: '14%', width: '170px' }
+      { img: '24.png', top: '15%', left: '52%', width: '180px' },
+      { img: '23.png', top: '70%', left: '45%', width: '165px' }
     ],
     rightDecos: [
-      { img: '25.png', top: '11%', left: '12%', width: '185px' },
-      { img: '26.png', top: '28%', left: '74%', width: '170px' }
+      { img: '25.png', top: '8%', left: '5%', width: '180px' },
+      { img: '26.png', top: '32%', left: '68%', width: '165px' }
     ]
   },
-  // EXPLORANDO (15-19)
+  
+  // EXPLORANDO (15-19) - Coordenadas recalculadas
   {
     name: 'EXPLORANDO',
     ids: [15, 16, 17, 18, 19],
     leftSlots: [
-      { id: 15, top: '20%', left: '8%', width: '22%' },
-      { id: 16, top: '56%', left: '8%', width: '20%' },
-      { id: 17, top: '56%', left: '32%', width: '18%' }
+      { id: 15, top: '18%', left: '8%', width: '25%' },
+      { id: 16, top: '60%', left: '8%', width: '22%' },
+      { id: 17, top: '60%', left: '42%', width: '20%' }
     ],
     rightSlots: [
-      { id: 18, top: '14%', left: '8%', width: '60%' },
-      { id: 19, top: '54%', left: '8%', width: '60%' }
+      { id: 18, top: '12%', left: '10%', width: '35%' },
+      { id: 19, top: '58%', left: '10%', width: '35%' }
     ],
     leftDecos: [
-      { img: '2.png', top: '12%', left: '56%', width: '200px' },
-      { img: '4.png', top: '48%', left: '10%', width: '180px' },
-      { img: '3.png', top: '76%', left: '12%', width: '210px' }
+      { img: '2.png', top: '12%', left: '52%', width: '195px' },
+      { img: '4.png', top: '52%', left: '5%', width: '175px' },
+      { img: '3.png', top: '82%', left: '10%', width: '205px' }
     ],
     rightDecos: [
-      { img: '7.png', top: '8%', left: '72%', width: '170px' },
-      { img: '6.png', top: '16%', left: '14%', width: '185px' },
-      { img: '5.png', top: '44%', left: '68%', width: '185px' }
+      { img: '7.png', top: '5%', left: '65%', width: '165px' },
+      { img: '6.png', top: '18%', left: '8%', width: '180px' },
+      { img: '5.png', top: '50%', left: '62%', width: '180px' }
     ]
   },
-  // BRINDANDO (20-22)
+  
+  // BRINDANDO (20-22) - Coordenadas recalculadas
   {
     name: 'BRINDANDO',
     ids: [20, 21, 22],
     leftSlots: [
-      { id: 20, top: '32%', left: '8%', width: '22%' }
+      { id: 20, top: '28%', left: '8%', width: '25%' }
     ],
     rightSlots: [
-      { id: 21, top: '14%', left: '8%', width: '60%' },
-      { id: 22, top: '54%', left: '8%', width: '60%' }
+      { id: 21, top: '12%', left: '10%', width: '35%' },
+      { id: 22, top: '58%', left: '10%', width: '35%' }
     ],
     leftDecos: [
-      { img: '14.png', top: '28%', left: '56%', width: '200px' },
-      { img: '15.png', top: '66%', left: '24%', width: '185px' }
+      { img: '14.png', top: '25%', left: '52%', width: '195px' },
+      { img: '15.png', top: '70%', left: '48%', width: '180px' }
     ],
     rightDecos: [
-      { img: '17.png', top: '18%', left: '74%', width: '170px' },
-      { img: '16.png', top: '58%', left: '72%', width: '170px' }
+      { img: '17.png', top: '18%', left: '68%', width: '165px' },
+      { img: '16.png', top: '65%', left: '65%', width: '165px' }
     ]
   },
-  // SOFRENDO (23-25)
+  
+  // SOFRENDO (23-25) - Coordenadas recalculadas
   {
     name: 'SOFRENDO',
     ids: [23, 24, 25],
     leftSlots: [
-      { id: 23, top: '32%', left: '8%', width: '22%' }
+      { id: 23, top: '28%', left: '8%', width: '25%' }
     ],
     rightSlots: [
-      { id: 24, top: '14%', left: '8%', width: '60%' },
-      { id: 25, top: '54%', left: '8%', width: '60%' }
+      { id: 24, top: '12%', left: '10%', width: '35%' },
+      { id: 25, top: '58%', left: '10%', width: '35%' }
     ],
     leftDecos: [
-      { img: '28.png', top: '26%', left: '58%', width: '185px' },
-      { img: '27.png', top: '68%', left: '20%', width: '170px' }
+      { img: '28.png', top: '22%', left: '54%', width: '180px' },
+      { img: '27.png', top: '72%', left: '48%', width: '165px' }
     ],
     rightDecos: [
-      { img: '30.png', top: '18%', left: '74%', width: '185px' },
-      { img: '29.png', top: '58%', left: '72%', width: '170px' }
+      { img: '30.png', top: '18%', left: '68%', width: '180px' },
+      { img: '29.png', top: '65%', left: '65%', width: '165px' }
     ]
   },
-  // ESPECIAIS (26-29)
+  
+  // ESPECIAIS (26-29) - Coordenadas recalculadas
   {
     name: 'ESPECIAIS',
     ids: [26, 27, 28, 29],
     leftSlots: [
-      { id: 26, top: '20%', left: '8%', width: '22%' },
-      { id: 27, top: '56%', left: '8%', width: '20%' }
+      { id: 26, top: '18%', left: '8%', width: '25%' },
+      { id: 27, top: '62%', left: '8%', width: '22%' }
     ],
     rightSlots: [
-      { id: 28, top: '14%', left: '8%', width: '60%' },
-      { id: 29, top: '54%', left: '8%', width: '60%' }
+      { id: 28, top: '12%', left: '10%', width: '35%' },
+      { id: 29, top: '58%', left: '10%', width: '35%' }
     ],
     leftDecos: [
-      { img: '31.png', top: '20%', left: '58%', width: '170px' },
-      { img: '32.png', top: '68%', left: '20%', width: '170px' }
+      { img: '31.png', top: '15%', left: '52%', width: '165px' },
+      { img: '32.png', top: '70%', left: '48%', width: '165px' }
     ],
     rightDecos: [
-      { img: '34.png', top: '9%', left: '76%', width: '185px' },
-      { img: '33.png', top: '58%', left: '72%', width: '195px' }
+      { img: '34.png', top: '8%', left: '70%', width: '180px' },
+      { img: '33.png', top: '65%', left: '65%', width: '190px' }
     ]
   }
 ];
 
 // ==================== ESTADO GLOBAL ====================
 let allStickers = [];
-let inventory = JSON.parse(localStorage.getItem('album_v12_inv') || '[]');
-let glued = JSON.parse(localStorage.getItem('album_v12_glued') || '[]');
+let inventory = JSON.parse(localStorage.getItem('album_v13_inv') || '[]');
+let glued = JSON.parse(localStorage.getItem('album_v13_glued') || '[]');
 let currentPage = 0;
 let pending = [];
 
@@ -961,7 +964,7 @@ async function init() {
       .map(r => ({
         id: Number(r.c[0].v),
         theme: String(r.c[1]?.v || '').trim(),
-        url: String(r.c[2]?.v || '').trim(), // Sanitização
+        url: String(r.c[2]?.v || '').trim(),
         voucher: String(r.c[3]?.v || '').trim()
       }));
     
@@ -994,11 +997,14 @@ function renderPage() {
     leftPage.innerHTML = '';
     rightPage.innerHTML = '';
     
+    // Remover todas as classes especiais primeiro
+    leftPage.classList.remove('special-page-bg');
+    rightPage.classList.remove('special-page-bg');
+    
     // Aplicar tema especial para ESPECIAIS
     if (page.name === 'ESPECIAIS') {
-      document.body.classList.add('special-theme');
-    } else {
-      document.body.classList.remove('special-theme');
+      leftPage.classList.add('special-page-bg');
+      rightPage.classList.add('special-page-bg');
     }
     
     // CAPA (Page 0)
@@ -1034,7 +1040,7 @@ function renderPage() {
       const img = document.createElement('img');
       img.src = deco.img;
       img.alt = '';
-      img.onerror = () => img.src = IMG_PLACEHOLDER; // Placeholder em caso de erro
+      img.onerror = () => img.src = IMG_PLACEHOLDER;
       div.appendChild(img);
       leftPage.appendChild(div);
     });
@@ -1072,7 +1078,7 @@ function renderPage() {
   }, 200);
 }
 
-// ==================== CRIAÇÃO DE SLOT (ASPECT RATIO RIGOROSO) ====================
+// ==================== CRIAÇÃO DE SLOT (ASPECT RATIO RIGOROSO 2:3) ====================
 function createSlot(container, config, page) {
   const sticker = allStickers.find(s => s.id === config.id);
   const filled = glued.includes(config.id);
@@ -1285,8 +1291,8 @@ function navigate(dir) {
 
 // ==================== SALVAR ESTADO ====================
 function save() {
-  localStorage.setItem('album_v12_inv', JSON.stringify(inventory));
-  localStorage.setItem('album_v12_glued', JSON.stringify(glued));
+  localStorage.setItem('album_v13_inv', JSON.stringify(inventory));
+  localStorage.setItem('album_v13_glued', JSON.stringify(glued));
 }
 
 // ==================== INICIAR ====================
