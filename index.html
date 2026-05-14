@@ -95,13 +95,17 @@ body {
   height: 100%;
   position: relative;
   padding: 40px 45px;
-  background: #fdfbf7;
+  background: #f9f5ed;
   transform-style: preserve-3d;
   transition: opacity 0.4s ease, transform 0.4s ease;
   
-  /* Textura grain */
+  /* Textura de papel matte realista (pólen creme) - VISÍVEL */
   background-image: 
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    radial-gradient(circle at 20% 30%, rgba(230,220,200,0.25) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(240,230,210,0.22) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(235,225,205,0.18) 0%, transparent 40%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+  background-blend-mode: multiply, multiply, multiply, normal;
 }
 
 /* Fundo especial para página ESPECIAIS */
@@ -851,15 +855,15 @@ body {
 
   <div id="sidebar">
     <button id="btn-pack" onclick="openPack()">🎁 ABRIR PACOTE</button>
+    <div class="nav-buttons">
+      <button class="nav-btn nav-prev" onclick="navigate(-1)">← ANTERIOR</button>
+      <button class="nav-btn nav-next" onclick="navigate(1)">PRÓXIMA →</button>
+    </div>
     <div id="inv-container">
       <div id="inv-header">MINHAS FIGURINHAS</div>
       <div id="inventory">
         <div class="inventory-empty">Abra pacotes para<br>receber figurinhas! 🎴</div>
       </div>
-    </div>
-    <div class="nav-buttons">
-      <button class="nav-btn nav-prev" onclick="navigate(-1)">← ANTERIOR</button>
-      <button class="nav-btn nav-next" onclick="navigate(1)">PRÓXIMA →</button>
     </div>
     <button id="btn-reset" onclick="resetProgress()">🔄 Resetar Progresso</button>
   </div>
@@ -911,13 +915,13 @@ const PAGES = [
       { id: 4, top: '54%', left: '10%', width: '28%' }
     ],
     leftDecos: [
-      { img: '18.png', top: '5%', left: '50%', width: '264px' },
-      { img: '19.png', top: '70%', left: '48%', width: '252px' }
+      { img: '18.png', top: '2%', left: '55%', width: '264px' },
+      { img: '19.png', top: '82%', left: '40%', width: '252px' }
     ],
     rightDecos: [
-      { img: '20.png', top: '2%', left: '65%', width: '276px' },
-      { img: '21.png', top: '28%', left: '75%', width: '228px' },
-      { img: '22.png', top: '77%', left: '65%', width: '264px' }
+      { img: '20.png', top: '-2%', left: '70%', width: '276px' },
+      { img: '21.png', top: '25%', left: '78%', width: '228px' },
+      { img: '22.png', top: '79%', left: '68%', width: '264px' }
     ]
   },
   
@@ -935,14 +939,14 @@ const PAGES = [
       { id: 9, top: '54%', left: '10%', width: '28%' }
     ],
     leftDecos: [
-      { img: '9.png', top: '8%', left: '50%', width: '264px' },
-      { img: '8.png', top: '30%', left: '58%', width: '246px' },
-      { img: '10.png', top: '64%', left: '50%', width: '258px' },
-      { img: '11.png', top: '84%', left: '48%', width: '270px' }
+      { img: '9.png', top: '5%', left: '55%', width: '264px' },
+      { img: '8.png', top: '28%', left: '60%', width: '246px' },
+      { img: '10.png', top: '78%', left: '40%', width: '258px' },
+      { img: '11.png', top: '88%', left: '10%', width: '270px' }
     ],
     rightDecos: [
-      { img: '12.png', top: '3%', left: '0%', width: '258px' },
-      { img: '13.png', top: '28%', left: '70%', width: '246px' }
+      { img: '12.png', top: '-3%', left: '-8%', width: '258px' },
+      { img: '13.png', top: '25%', left: '75%', width: '246px' }
     ]
   },
   
@@ -960,12 +964,12 @@ const PAGES = [
       { id: 14, top: '12%', left: '50%', width: '22%' }
     ],
     leftDecos: [
-      { img: '24.png', top: '8%', left: '52%', width: '264px' },
-      { img: '23.png', top: '70%', left: '48%', width: '246px' }
+      { img: '24.png', top: '5%', left: '55%', width: '264px' },
+      { img: '23.png', top: '82%', left: '35%', width: '246px' }
     ],
     rightDecos: [
-      { img: '25.png', top: '3%', left: '0%', width: '264px' },
-      { img: '26.png', top: '28%', left: '67%', width: '246px' }
+      { img: '25.png', top: '-3%', left: '-8%', width: '264px' },
+      { img: '26.png', top: '25%', left: '75%', width: '246px' }
     ]
   },
   
@@ -983,14 +987,14 @@ const PAGES = [
       { id: 19, top: '54%', left: '10%', width: '28%' }
     ],
     leftDecos: [
-      { img: '2.png', top: '5%', left: '52%', width: '282px' },
-      { img: '4.png', top: '52%', left: '0%', width: '258px' },
-      { img: '3.png', top: '84%', left: '8%', width: '294px' }
+      { img: '2.png', top: '2%', left: '55%', width: '282px' },
+      { img: '4.png', top: '58%', left: '-10%', width: '258px' },
+      { img: '3.png', top: '88%', left: '0%', width: '294px' }
     ],
     rightDecos: [
-      { img: '7.png', top: '0%', left: '64%', width: '246px' },
-      { img: '6.png', top: '13%', left: '3%', width: '264px' },
-      { img: '5.png', top: '50%', left: '62%', width: '264px' }
+      { img: '7.png', top: '-5%', left: '70%', width: '246px' },
+      { img: '6.png', top: '10%', left: '-3%', width: '264px' },
+      { img: '5.png', top: '48%', left: '68%', width: '264px' }
     ]
   },
   
@@ -1006,12 +1010,12 @@ const PAGES = [
       { id: 22, top: '54%', left: '10%', width: '28%' }
     ],
     leftDecos: [
-      { img: '14.png', top: '20%', left: '52%', width: '282px' },
-      { img: '15.png', top: '70%', left: '48%', width: '264px' }
+      { img: '14.png', top: '10%', left: '58%', width: '282px' },
+      { img: '15.png', top: '82%', left: '40%', width: '264px' }
     ],
     rightDecos: [
-      { img: '17.png', top: '13%', left: '67%', width: '246px' },
-      { img: '16.png', top: '67%', left: '64%', width: '246px' }
+      { img: '17.png', top: '10%', left: '72%', width: '246px' },
+      { img: '16.png', top: '70%', left: '68%', width: '246px' }
     ]
   },
   
@@ -1027,12 +1031,12 @@ const PAGES = [
       { id: 25, top: '54%', left: '10%', width: '28%' }
     ],
     leftDecos: [
-      { img: '28.png', top: '16%', left: '54%', width: '264px' },
-      { img: '27.png', top: '72%', left: '48%', width: '246px' }
+      { img: '28.png', top: '8%', left: '60%', width: '264px' },
+      { img: '27.png', top: '82%', left: '40%', width: '246px' }
     ],
     rightDecos: [
-      { img: '30.png', top: '13%', left: '67%', width: '264px' },
-      { img: '29.png', top: '67%', left: '64%', width: '246px' }
+      { img: '30.png', top: '10%', left: '72%', width: '264px' },
+      { img: '29.png', top: '70%', left: '68%', width: '246px' }
     ]
   },
   
@@ -1049,8 +1053,8 @@ const PAGES = [
       { id: 29, top: '54%', left: '10%', width: '28%' }
     ],
     leftDecos: [
-      { img: '31.png', top: '8%', left: '52%', width: '246px' },
-      { img: '32.png', top: '70%', left: '48%', width: '246px' }
+      { img: '31.png', top: '5%', left: '55%', width: '246px' },
+      { img: '32.png', top: '78%', left: '40%', width: '246px' }
     ],
     rightDecos: [
       { img: '34.png', top: '3%', left: '70%', width: '264px' },
