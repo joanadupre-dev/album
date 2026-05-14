@@ -30,7 +30,7 @@ body {
   justify-content: center;
   min-height: 100vh;
   padding: 20px;
-  transition: background 0.6s ease;
+  overflow: hidden;
 }
 
 #app {
@@ -44,7 +44,6 @@ body {
   width: 1200px;
   height: 700px;
   background: #fdfbf7;
-  border-radius: 0;
   box-shadow: 
     -15px 0 40px rgba(0,0,0,.25),
     15px 0 40px rgba(0,0,0,.25),
@@ -52,17 +51,9 @@ body {
   display: flex;
   position: relative;
   perspective: 2000px;
-  transform-style: preserve-3d;
-  overflow: visible;
-  
-  /* Textura de papel grain */
-  background-image: 
-    radial-gradient(circle at 20% 50%, transparent 0%, rgba(0,0,0,.01) 50%, transparent 100%),
-    radial-gradient(circle at 80% 50%, transparent 0%, rgba(0,0,0,.01) 50%, transparent 100%);
-  background-size: 200px 200px, 180px 180px;
 }
 
-/* Efeito 3D da lombada com sombra interna na dobra */
+/* Lombada dinâmica */
 #book::before {
   content: '';
   position: absolute;
@@ -78,16 +69,13 @@ body {
     rgba(0,0,0,.1) 80%,
     rgba(0,0,0,0) 100%
   );
-  box-shadow: inset 0 0 30px rgba(0,0,0,.15);
   z-index: 200;
   pointer-events: none;
-  filter: blur(3px);
   transition: opacity 0.4s ease;
 }
 
-/* Esconde lombada no modo capa para criar efeito de capa única contínua */
 #book.cover-mode::before {
-  opacity: 0;
+  opacity: 0; /* Capa sem sombra no meio */
 }
 
 .page {
@@ -95,756 +83,213 @@ body {
   height: 100%;
   position: relative;
   padding: 40px 45px;
-  background: #f9f5ed;
-  transform-style: preserve-3d;
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  background: #fdfbf7; /* Papel Pólen */
+  overflow: hidden; /* Anti-vazamento */
   
-  /* Textura de papel matte realista (pólen creme) - VISÍVEL */
+  /* Textura de papel matte */
   background-image: 
-    radial-gradient(circle at 20% 30%, rgba(230,220,200,0.25) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(240,230,210,0.22) 0%, transparent 50%),
-    radial-gradient(circle at 40% 80%, rgba(235,225,205,0.18) 0%, transparent 40%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
-  background-blend-mode: multiply, multiply, multiply, normal;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
 }
 
-/* Fundo especial para página ESPECIAIS */
 .page.special-page-bg {
   background: radial-gradient(circle, #1a1a2e 0%, #000 100%);
 }
 
-/* ==================== CAPA (PAGE 0) - FRONT COVER ÚNICA E LUXUOSA ==================== */
+/* ==================== CAPA ==================== */
 .cover-page {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 25%, #fa9fb5 50%, #ffc3a0 75%, #ffecd2 100%);
+  background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
   position: relative;
-  overflow: hidden;
 }
 
-.cover-page::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: 
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
-}
-
-/* Moldura física interna DUPLA (luxo) */
 .cover-page::after {
   content: '';
   position: absolute;
   inset: 40px;
   border: 8px double rgba(255,255,255,0.4);
   border-radius: 8px;
-  pointer-events: none;
-  box-shadow: 
-    inset 0 0 0 2px rgba(255,215,0,0.3),
-    inset 0 2px 12px rgba(0,0,0,.15),
-    inset 0 -2px 12px rgba(0,0,0,.08),
-    0 0 30px rgba(255,255,255,.2);
-}
-
-/* Ícones decorativos de luxo nos cantos */
-.cover-star {
-  position: absolute;
-  font-size: 2.5rem;
-  opacity: 0.5;
-  z-index: 2;
-  animation: twinkle-deluxe 4s ease-in-out infinite;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,.2));
-}
-
-.cover-star:nth-child(1) { 
-  top: 70px; 
-  left: 70px; 
-  animation-delay: 0s; 
-}
-.cover-star:nth-child(2) { 
-  top: 70px; 
-  right: 70px; 
-  animation-delay: 1s; 
-}
-.cover-star:nth-child(3) { 
-  bottom: 70px; 
-  left: 70px; 
-  animation-delay: 2s; 
-}
-.cover-star:nth-child(4) { 
-  bottom: 70px; 
-  right: 70px; 
-  animation-delay: 3s; 
-}
-
-@keyframes twinkle-deluxe {
-  0%, 100% { 
-    opacity: 0.5; 
-    transform: scale(1) rotate(0deg); 
-  }
-  50% { 
-    opacity: 0.9; 
-    transform: scale(1.3) rotate(15deg); 
-  }
 }
 
 .cover-title {
-  font-family: 'LazyDog', cursive;
   font-size: 5rem;
-  line-height: 1.25;
-  text-align: center;
   color: #fff;
-  position: relative;
-  z-index: 3;
-  padding: 40px;
-  
-  /* Debossing effect melhorado + destaque premium */
-  text-shadow: 
-    -2px -2px 3px rgba(255,255,255,.6),
-    2px 2px 5px rgba(0,0,0,.4),
-    3px 3px 8px rgba(0,0,0,.3),
-    0 0 40px rgba(255,215,0,.3);
+  text-align: center;
+  text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+  z-index: 10;
 }
 
-/* ==================== TÍTULO DA PÁGINA ==================== */
-.page-title {
-  font-family: 'LazyDog', cursive;
-  font-size: 4rem;
-  line-height: 1;
-  color: #2a2a2a;
-  margin-bottom: 20px;
-  position: relative;
-  z-index: 15;
-  letter-spacing: 0.02em;
-}
-
-.page.special-page-bg .page-title {
-  color: #ffd700;
-  text-shadow: 0 0 20px rgba(255,215,0,.5);
-}
-
-/* ==================== ILUSTRAÇÕES DECORATIVAS ==================== */
+/* ==================== ILUSTRAÇÕES ==================== */
 .sticker-deco {
   position: absolute;
-  z-index: 1; /* Camada de fundo - nunca bloqueia slots */
-  pointer-events: none; /* CRÍTICO: Nunca bloqueia cliques nos slots */
-  filter: drop-shadow(2px 4px 8px rgba(0,0,0,.2));
-  transition: transform 0.3s ease;
+  z-index: 1;
+  pointer-events: none; /* Nunca bloqueia o slot */
+  filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.15));
 }
 
 .sticker-deco img {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-  pointer-events: none; /* Garantia dupla */
+  height: auto;
 }
 
-/* ==================== SLOTS (ASPECT RATIO RIGOROSO 2:3) ==================== */
-.slots-container {
-  position: absolute;
-  inset: 0;
-  z-index: 10; /* Sempre acima das ilustrações */
-}
-
+/* ==================== SLOTS ==================== */
 .slot {
   position: absolute;
-  aspect-ratio: 2 / 3; /* VERTICALIDADE TOTAL FORÇADA */
+  aspect-ratio: 2 / 3;
   background: #f5ebe0;
   border: 3px solid #e3d5c3;
-  border-radius: 4px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'LazyDog', cursive;
-  font-size: 3rem;
-  color: rgba(0,0,0,.1);
+  font-size: 2.5rem;
+  color: rgba(0,0,0,0.08);
+  z-index: 10;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 
-    inset 0 1px 3px rgba(0,0,0,.05),
-    2px 4px 12px rgba(0,0,0,.08);
+  transition: transform 0.2s;
+  box-shadow: 2px 4px 10px rgba(0,0,0,0.05);
 }
 
-.slot:hover {
-  transform: scale(1.02) translateY(-2px);
-  box-shadow: 0 10px 30px rgba(0,0,0,.15);
-  border-color: #d4c4b0;
-}
+.slot:hover { transform: scale(1.03); }
 
-.slot.drag-over {
-  background: #fff8e7;
-  border-color: #ffb347;
-  box-shadow: 0 0 0 4px rgba(255,179,71,.3), 0 10px 30px rgba(0,0,0,.2);
-  transform: scale(1.03);
-}
+.slot.filled { background: #fff; border-color: #eee; }
+.slot.filled img { width: 85%; height: 85%; object-fit: contain; }
 
-.slot.filled {
-  background: #fff;
-  border-color: #e8e8e8;
-}
-
-/* REGRA DOS 85% - Imagem ocupa 85% e flutua no centro (preenchimento otimizado) */
-.slot.filled img {
-  width: 85%;
-  height: 85%;
-  object-fit: contain;
-}
-
-/* EFEITO ESPECIAL DOURADO PARA PÁGINA ESPECIAIS */
 .slot.special.filled {
-  background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 45%, #b38728 70%, #fbf5b7 100%);
+  background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 45%, #b38728 100%);
   border-color: #d4af37;
-  box-shadow: 
-    0 0 20px rgba(191,149,63,.6),
-    0 8px 30px rgba(0,0,0,.3);
+  box-shadow: 0 0 20px rgba(191,149,63,0.5);
 }
 
-.slot.special.filled::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, 
-    rgba(191,149,63,.4) 0%, 
-    rgba(252,246,186,.2) 35%, 
-    rgba(179,135,40,.4) 70%,
-    rgba(251,245,183,.2) 100%
-  );
-  background-size: 300% 300%;
-  animation: shimmer-special 4s ease-in-out infinite;
-  pointer-events: none;
-  mix-blend-mode: overlay;
-  border-radius: 4px;
-}
-
-@keyframes shimmer-special {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-/* ==================== SIDEBAR ==================== */
-#sidebar {
-  width: 300px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+/* ==================== SIDEBAR & NAV ==================== */
+#sidebar { width: 320px; display: flex; flex-direction: column; gap: 12px; }
 
 #btn-pack {
   font-family: 'LazyDog', cursive;
   font-size: 1.6rem;
-  padding: 20px 18px;
+  padding: 15px;
+  background: #a855f7;
+  color: #fff;
   border: none;
   border-radius: 12px;
-  background: linear-gradient(145deg, #7c3aed 0%, #a855f7 100%);
-  color: #fff;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 8px 24px rgba(124,58,237,.4);
-  border-bottom: 5px solid #6d28d9;
-  position: relative;
-  overflow: hidden;
+  border-bottom: 4px solid #7e22ce;
 }
 
-#btn-pack::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,.2), transparent);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-#btn-pack:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(124,58,237,.5);
-}
-
-#btn-pack:hover::before {
-  opacity: 1;
-}
-
-#btn-pack:active {
-  transform: translateY(1px);
-  border-bottom-width: 2px;
-}
-
-#inv-container {
-  background: #fdfbf7;
-  border-radius: 14px;
-  box-shadow: 0 10px 40px rgba(0,0,0,.12);
-  display: flex;
-  flex-direction: column;
+.nav-buttons { display: flex; gap: 8px; }
+.nav-btn {
   flex: 1;
-  overflow: hidden;
-  border: 2px solid #e8dcc8;
-}
-
-#inv-header {
-  font-family: 'LazyDog', cursive;
-  font-size: 1.7rem;
-  text-align: center;
-  padding: 18px;
-  background: #f5ebe0;
-  border-bottom: 3px solid #e3d5c3;
-  color: #2a2a2a;
-}
-
-#inventory {
-  flex: 1;
-  overflow-y: auto;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.inventory-card {
-  background: #fff;
-  border: 2px solid #e8e8e8;
-  border-radius: 10px;
-  padding: 12px;
-  display: flex;
-  gap: 14px;
-  cursor: grab;
-  transition: all 0.2s ease;
-  user-select: none;
-}
-
-.inventory-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0,0,0,.15);
-  border-color: #d0d0d0;
-}
-
-.inventory-card.dragging {
-  opacity: 0.4;
-  cursor: grabbing;
-}
-
-.inventory-thumb {
-  width: 70px;
-  height: 70px;
-  background: #f8f8f8;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
-  border: 2px solid #e8e8e8;
-}
-
-.inventory-thumb img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-.inventory-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 3px;
-}
-
-.inventory-number {
   font-family: 'LazyDog', cursive;
   font-size: 1.2rem;
-  color: #2a2a2a;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+}
+.nav-prev { background: #6b7280; border-bottom: 4px solid #4b5563; }
+.nav-next { background: #10b981; border-bottom: 4px solid #059669; }
+
+#inv-container {
+  background: #fff;
+  border-radius: 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #e8dcc8;
 }
 
-.inventory-theme {
-  font-size: 0.82rem;
-  color: #888;
-  font-family: Arial, sans-serif;
-}
+#inv-header { padding: 12px; background: #f5ebe0; text-align: center; font-size: 1.4rem; }
+#inventory { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
 
-.inventory-empty {
-  text-align: center;
-  color: #aaa;
-  padding: 60px 20px;
-  font-size: 1.05rem;
-  line-height: 1.8;
-  font-family: Arial, sans-serif;
-}
-
-.nav-buttons {
+.inventory-card {
+  border: 1px solid #eee;
+  padding: 8px;
+  border-radius: 8px;
   display: flex;
   gap: 10px;
+  align-items: center;
+  cursor: grab;
 }
 
-.nav-btn {
-  font-family: 'LazyDog', cursive;
-  font-size: 1.35rem;
-  padding: 16px 22px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s;
-  flex: 1;
-  color: #fff;
-  border-bottom: 4px solid;
-}
-
-.nav-btn:hover {
-  transform: translateY(-2px);
-}
-
-.nav-btn:active {
-  transform: translateY(1px);
-  border-bottom-width: 2px;
-}
-
-.nav-prev {
-  background: #6b7280;
-  border-bottom-color: #4b5563;
-}
-
-.nav-next {
-  background: #10b981;
-  border-bottom-color: #059669;
-}
-
-/* ==================== BOTÃO RESET (DISCRETO) ==================== */
 #btn-reset {
-  font-family: Arial, sans-serif;
-  font-size: 0.75rem;
-  padding: 8px 12px;
+  font-family: 'LazyDog', cursive;
+  background: none;
   border: 1px solid #ddd;
-  border-radius: 6px;
-  background: #f5f5f5;
-  color: #888;
+  color: #999;
+  padding: 5px;
   cursor: pointer;
-  transition: all 0.2s;
-  text-align: center;
+  border-radius: 4px;
 }
 
-#btn-reset:hover {
-  background: #ffebee;
-  color: #d32f2f;
-  border-color: #d32f2f;
-}
-
-/* ==================== ENVELOPE (GACHA) ==================== */
+/* ==================== GACHA OVERLAY ==================== */
 #pack-overlay {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.97);
+  background: rgba(0,0,0,0.95);
   z-index: 5000;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 40px;
+  gap: 30px;
 }
-
-#pack-overlay.active {
-  display: flex;
-}
+#pack-overlay.active { display: flex; }
 
 .envelope {
-  width: 240px;
-  height: 320px;
-  background: linear-gradient(145deg, #d8b5ff 0%, #b794f6 100%);
-  border-radius: 16px;
+  width: 200px;
+  height: 280px;
+  background: #b794f6;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 20px;
-  cursor: pointer;
-  box-shadow: 0 30px 80px rgba(124,58,237,.6);
-  animation: envelope-float 3s ease-in-out infinite;
-  position: relative;
-  overflow: hidden;
-  border: 3px solid rgba(255,255,255,.3);
-  
-  /* Bordas serrilhadas sutis */
-  clip-path: polygon(
-    0% 3%, 5% 0%, 10% 3%, 15% 0%, 20% 3%, 25% 0%, 30% 3%, 35% 0%, 40% 3%, 45% 0%, 50% 3%,
-    55% 0%, 60% 3%, 65% 0%, 70% 3%, 75% 0%, 80% 3%, 85% 0%, 90% 3%, 95% 0%, 100% 3%,
-    100% 100%, 0% 100%
-  );
-}
-
-/* Shimmer effect no hover */
-.envelope::before {
-  content: '';
-  position: absolute;
-  inset: -100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.6s;
-}
-
-.envelope:hover::before {
-  transform: translateX(100%);
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-/* Vibração no hover */
-.envelope:hover {
-  animation: envelope-float 3s ease-in-out infinite, vibrate 0.3s ease-in-out infinite;
-}
-
-@keyframes vibrate {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  25% { transform: translateY(-2px) rotate(-1deg); }
-  75% { transform: translateY(2px) rotate(1deg); }
-}
-
-@keyframes envelope-float {
-  0%, 100% { transform: translateY(0) rotate(-3deg); }
-  50% { transform: translateY(-20px) rotate(3deg); }
-}
-
-.envelope-icon {
-  font-size: 5rem;
-  position: relative;
-  z-index: 1;
-  text-shadow: 0 4px 8px rgba(0,0,0,.3);
-}
-
-.envelope-text {
-  font-family: 'LazyDog', cursive;
-  font-size: 2.2rem;
-  color: #fff;
-  text-align: center;
-  line-height: 1.2;
-  position: relative;
-  z-index: 1;
-  text-shadow: 0 2px 6px rgba(0,0,0,.3);
-}
-
-.envelope-hint {
-  font-family: 'LazyDog', cursive;
-  color: rgba(255,255,255,.5);
-  font-size: 1.15rem;
-  animation: blink-hint 2.5s ease-in-out infinite;
-}
-
-@keyframes blink-hint {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
-}
-
-.envelope.tearing {
-  animation: tear-anim 0.6s forwards;
-}
-
-@keyframes tear-anim {
-  0% { transform: rotate(-3deg) scale(1); }
-  30% { transform: rotate(8deg) scale(1.12); }
-  60% { transform: rotate(-12deg) scale(0.88); }
-  100% { transform: scale(0) rotate(0) translateY(-100px); opacity: 0; }
-}
-
-.reveal-cards {
-  display: none;
-  gap: 24px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.reveal-cards.active {
-  display: flex;
-}
-
-.reveal-card {
-  background: #fdfbf7;
-  padding: 12px;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 24px 60px rgba(0,0,0,.4);
-  animation: card-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-  border: 3px solid #e8dcc8;
-}
-
-/* CARTA ESPECIAL COM BRILHO DOURADO */
-.reveal-card.special {
-  background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 45%, #b38728 70%, #fbf5b7 100%);
-  border-color: #d4af37;
-  box-shadow: 
-    0 0 30px rgba(191,149,63,.8),
-    0 24px 60px rgba(0,0,0,.5);
-  animation: card-pop-special 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
-.reveal-card.special .reveal-number {
-  color: #8b6914;
-  font-weight: bold;
-  text-shadow: 0 1px 3px rgba(255,255,255,.5);
-}
-
-@keyframes card-pop-special {
-  from { 
-    transform: scale(0) rotate(-16deg); 
-    opacity: 0;
-    filter: brightness(2);
-  }
-  to { 
-    transform: scale(1) rotate(0); 
-    opacity: 1;
-    filter: brightness(1);
-  }
-}
-
-.reveal-card:nth-child(2) { animation-delay: 0.2s; }
-.reveal-card:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes card-pop {
-  from { transform: scale(0) rotate(-16deg); opacity: 0; }
-  to { transform: scale(1) rotate(0); opacity: 1; }
-}
-
-.reveal-photo {
-  width: 140px;
-  height: 170px;
-  background: #f5f5f5;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  margin-bottom: 12px;
-  border: 2px solid #e8e8e8;
-}
-
-.reveal-photo img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-.reveal-number {
-  font-family: 'LazyDog', cursive;
-  font-size: 1.5rem;
-  color: #2a2a2a;
-}
-
-#btn-collect {
-  display: none;
-  font-family: 'LazyDog', cursive;
-  font-size: 1.7rem;
-  padding: 18px 50px;
-  border: none;
-  border-radius: 12px;
-  background: #10b981;
   color: #fff;
   cursor: pointer;
-  border-bottom: 5px solid #059669;
-  box-shadow: 0 8px 24px rgba(16,185,129,.4);
+  clip-path: polygon(0% 2%, 10% 0%, 20% 2%, 30% 0%, 40% 2%, 50% 0%, 60% 2%, 70% 0%, 80% 2%, 90% 0%, 100% 2%, 100% 100%, 0% 100%);
 }
 
-#btn-collect.active {
-  display: block;
-}
+.envelope.tearing { animation: tear 0.6s forwards; }
+@keyframes tear { to { transform: scale(0); opacity: 0; } }
 
-#btn-collect:active {
-  transform: translateY(2px);
-  border-bottom-width: 2px;
-}
+.reveal-cards { display: none; gap: 15px; }
+.reveal-cards.active { display: flex; }
+
+.reveal-card { background: #fff; padding: 10px; border-radius: 8px; text-align: center; width: 150px; }
+.reveal-card.special { background: linear-gradient(135deg, #bf953f, #fcf6ba); }
+.reveal-photo { height: 160px; overflow: hidden; margin-bottom: 5px; border-radius: 4px; }
+.reveal-photo img { width: 100%; height: 100%; object-fit: contain; }
 
 /* ==================== TROFÉU ==================== */
 #trophy-modal {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.98);
+  background: rgba(0,0,0,0.9);
   z-index: 6000;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 28px;
-  cursor: pointer;
-}
-
-#trophy-modal.active {
-  display: flex;
-}
-
-.trophy-icon {
-  font-size: 8rem;
-  animation: trophy-bounce 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes trophy-bounce {
-  from { transform: scale(0) translateY(80px); opacity: 0; }
-  to { transform: scale(1) translateY(0); opacity: 1; }
-}
-
-.trophy-title {
-  font-family: 'LazyDog', cursive;
-  font-size: 3.8rem;
   color: #ffd700;
-  text-shadow: 0 0 40px rgba(255,215,0,.6);
 }
+#trophy-modal.active { display: flex; }
+.trophy-message { background: #fff; color: #222; padding: 20px; border-radius: 10px; margin-top: 20px; }
 
-.trophy-message {
-  background: #fdfbf7;
-  padding: 32px 50px;
-  border-radius: 12px;
-  border: 6px solid #ffd700;
-  font-family: 'LazyDog', cursive;
-  font-size: 1.5rem;
-  text-align: center;
-  max-width: 560px;
-  color: #2a2a2a;
-  line-height: 1.7;
-  box-shadow: 0 0 50px rgba(255,215,0,.4);
-}
-
-/* ==================== LOADING ==================== */
-#loading {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: #fdfbf7;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 28px;
-}
-
-#loading.hide {
-  display: none;
-}
-
-.spinner {
-  width: 60px;
-  height: 60px;
-  border: 6px solid #f0f0f0;
-  border-top: 6px solid #7c3aed;
-  border-radius: 50%;
-  animation: spin-anim 0.9s linear infinite;
-}
-
-@keyframes spin-anim {
-  to { transform: rotate(360deg); }
-}
-
-.load-text {
-  font-family: 'LazyDog', cursive;
-  font-size: 1.8rem;
-  color: #666;
-}
+/* LOADING */
+#loading { position: fixed; inset: 0; background: #fdfbf7; z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+#loading.hide { display: none; }
 </style>
 </head>
 <body>
 
 <div id="loading">
   <div class="spinner"></div>
-  <div class="load-text">Carregando memórias...</div>
+  <div style="font-family:'LazyDog'; font-size: 2rem; margin-top: 20px;">Preparando seu álbum...</div>
 </div>
 
 <div id="app" style="display:none">
@@ -861,631 +306,251 @@ body {
     </div>
     <div id="inv-container">
       <div id="inv-header">MINHAS FIGURINHAS</div>
-      <div id="inventory">
-        <div class="inventory-empty">Abra pacotes para<br>receber figurinhas! 🎴</div>
-      </div>
+      <div id="inventory"></div>
     </div>
-    <button id="btn-reset" onclick="resetProgress()">🔄 Resetar Progresso</button>
+    <button id="btn-reset" onclick="resetProgress()">🔄 Resetar Álbum</button>
   </div>
 </div>
 
 <div id="pack-overlay">
   <div class="envelope" id="envelope" onclick="tearPack()">
-    <span class="envelope-icon">❤️</span>
-    <span class="envelope-text">NOVO<br>PACOTE</span>
+    <span style="font-size: 4rem;">❤️</span>
+    <span style="font-family: 'LazyDog'; font-size: 1.8rem;">RASGAR!</span>
   </div>
-  <div class="envelope-hint">Clique para rasgar</div>
   <div class="reveal-cards" id="reveal-cards"></div>
-  <button id="btn-collect" onclick="collect()">GUARDAR FIGURINHAS ✓</button>
+  <button id="btn-collect" style="display:none; font-family:'LazyDog'; font-size:1.5rem; padding:10px 30px; background:#10b981; color:#fff; border:none; border-radius:8px; cursor:pointer;" onclick="collect()">GUARDAR TUDO ✓</button>
 </div>
 
 <div id="trophy-modal" onclick="closeTrophy()">
-  <div class="trophy-icon">🏆</div>
-  <div class="trophy-title">PÁGINA COMPLETA!</div>
+  <span style="font-size: 6rem;">🏆</span>
+  <h2 style="font-family:'LazyDog'; font-size: 3rem;">PÁGINA COMPLETA!</h2>
   <div class="trophy-message" id="trophy-msg"></div>
 </div>
 
 <script>
-// ==================== CONFIGURAÇÃO DA PLANILHA ====================
 const SHEET_ID = '1KOgDq-gMhwOH_H9dPVrzTjGB86Is78hZ-0zNn4D6s7E';
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
-// Placeholder para imagens quebradas
-const IMG_PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23f5ebe0' width='100' height='100'/%3E%3Ctext x='50' y='60' font-size='50' text-anchor='middle' fill='%23ccc'%3E%3F%3C/text%3E%3C/svg%3E";
-
-// ==================== PAGES - RECÁLCULO MANUAL DE COORDENADAS COM MARGEM DE SEGURANÇA 10% ====================
+// --- DATABASE DE PÁGINAS (EQUILIBRADO E COM TODAS AS DECOS) ---
 const PAGES = [
-  // CAPA (Page 0)
-  {
-    name: 'CAPA',
-    ids: [],
-    isCover: true
-  },
-  
-  // COMENDO (1-4) - BALANCEADO 2:2
-  {
-    name: 'COMENDO',
+  { name: 'CAPA', ids: [], isCover: true },
+  { 
+    name: 'COMENDO', 
     ids: [1, 2, 3, 4],
-    // SLOTS CENTRALIZADOS E BALANCEADOS
-    leftSlots: [
-      { id: 1, top: '20%', left: '15%', width: '28%' },
-      { id: 2, top: '58%', left: '15%', width: '28%' }
-    ],
-    rightSlots: [
-      { id: 3, top: '20%', left: '15%', width: '28%' },
-      { id: 4, top: '58%', left: '15%', width: '28%' }
-    ],
-    // MOLDURA ORGÂNICA: Preenchendo espaços negativos com buffer 10%
-    leftDecos: [
-      // Espaço superior (acima slots)
-      { img: '18.png', top: '5%', left: '60%', width: '343px' }
-    ],
-    rightDecos: [
-      // Espaço superior direita
-      { img: '20.png', top: '5%', left: '65%', width: '359px' },
-      // Espaço inferior (rodapé)
-      { img: '22.png', top: '88%', left: '55%', width: '343px' }
-    ]
+    leftSlots: [{id:1, top:'15%', left:'15%', width:'30%'}, {id:2, top:'55%', left:'15%', width:'30%'}],
+    rightSlots: [{id:3, top:'15%', left:'15%', width:'30%'}, {id:4, top:'55%', left:'15%', width:'30%'}],
+    leftDecos: [{img:'1.png', top:'8%', left:'60%', width:'180px'}, {img:'2.png', top:'75%', left:'55%', width:'160px'}],
+    rightDecos: [{img:'3.png', top:'10%', left:'65%', width:'170px'}, {img:'4.png', top:'60%', left:'65%', width:'150px'}, {img:'5.png', top:'82%', left:'5%', width:'140px'}]
   },
-  
-  // BRINCANDO (5-9) - BALANCEADO 3:2
-  {
-    name: 'BRINCANDO',
+  { 
+    name: 'BRINCANDO', 
     ids: [5, 6, 7, 8, 9],
-    // SLOTS CENTRALIZADOS - Proporção 3:2
-    leftSlots: [
-      { id: 5, top: '16%', left: '12%', width: '26%' },
-      { id: 6, top: '44%', left: '12%', width: '26%' },
-      { id: 7, top: '72%', left: '12%', width: '26%' }
-    ],
-    rightSlots: [
-      { id: 8, top: '24%', left: '15%', width: '28%' },
-      { id: 9, top: '56%', left: '15%', width: '28%' }
-    ],
-    // MOLDURA ORGÂNICA: Espaços negativos
-    leftDecos: [
-      // Espaço lateral direito
-      { img: '9.png', top: '12%', left: '60%', width: '343px' }
-    ],
-    rightDecos: [
-      // Espaço superior
-      { img: '12.png', top: '6%', left: '5%', width: '335px' },
-      // Rodapé
-      { img: '11.png', top: '88%', left: '50%', width: '351px' }
-    ]
+    leftSlots: [{id:5, top:'15%', left:'12%', width:'28%'}, {id:6, top:'52%', left:'12%', width:'28%'}],
+    rightSlots: [{id:7, top:'12%', left:'15%', width:'28%'}, {id:8, top:'42%', left:'15%', width:'28%'}, {id:9, top:'72%', left:'15%', width:'28%'}],
+    leftDecos: [{img:'6.png', top:'10%', left:'55%', width:'180px'}, {img:'7.png', top:'80%', left:'60%', width:'160px'}],
+    rightDecos: [{img:'8.png', top:'5%', left:'65%', width:'150px'}, {img:'9.png', top:'50%', left:'65%', width:'170px'}, {img:'10.png', top:'80%', left:'55%', width:'140px'}]
   },
-  
-  // CUIDANDO (10-14) - BALANCEADO 2:3
-  {
-    name: 'CUIDANDO',
+  { 
+    name: 'CUIDANDO', 
     ids: [10, 11, 12, 13, 14],
-    // SLOTS CENTRALIZADOS - Proporção 2:3
-    leftSlots: [
-      { id: 10, top: '24%', left: '15%', width: '28%' },
-      { id: 11, top: '56%', left: '15%', width: '28%' }
-    ],
-    rightSlots: [
-      { id: 12, top: '16%', left: '12%', width: '26%' },
-      { id: 13, top: '44%', left: '12%', width: '26%' },
-      { id: 14, top: '72%', left: '12%', width: '26%' }
-    ],
-    // MOLDURA ORGÂNICA
-    leftDecos: [
-      // Espaço superior
-      { img: '24.png', top: '6%', left: '60%', width: '343px' }
-    ],
-    rightDecos: [
-      // Espaço superior esquerdo
-      { img: '25.png', top: '6%', left: '5%', width: '343px' },
-      // Rodapé
-      { img: '26.png', top: '88%', left: '55%', width: '320px' }
-    ]
+    leftSlots: [{id:10, top:'12%', left:'15%', width:'28%'}, {id:11, top:'42%', left:'15%', width:'28%'}, {id:12, top:'72%', left:'15%', width:'28%'}],
+    rightSlots: [{id:13, top:'15%', left:'12%', width:'28%'}, {id:14, top:'52%', left:'12%', width:'28%'}],
+    leftDecos: [{img:'11.png', top:'8%', left:'65%', width:'160px'}, {img:'12.png', top:'82%', left:'60%', width:'150px'}],
+    rightDecos: [{img:'13.png', top:'10%', left:'60%', width:'180px'}, {img:'14.png', top:'60%', left:'65%', width:'140px'}, {img:'15.png', top:'82%', left:'5%', width:'170px'}]
   },
-  
-  // EXPLORANDO (15-19) - BALANCEADO 3:2
-  {
-    name: 'EXPLORANDO',
+  { 
+    name: 'EXPLORANDO', 
     ids: [15, 16, 17, 18, 19],
-    // SLOTS CENTRALIZADOS
-    leftSlots: [
-      { id: 15, top: '16%', left: '12%', width: '26%' },
-      { id: 16, top: '44%', left: '12%', width: '26%' },
-      { id: 17, top: '72%', left: '12%', width: '26%' }
-    ],
-    rightSlots: [
-      { id: 18, top: '24%', left: '15%', width: '28%' },
-      { id: 19, top: '56%', left: '15%', width: '28%' }
-    ],
-    // MOLDURA ORGÂNICA
-    leftDecos: [
-      // Espaço lateral direito
-      { img: '2.png', top: '10%', left: '60%', width: '367px' }
-    ],
-    rightDecos: [
-      // Espaço superior direito
-      { img: '7.png', top: '6%', left: '68%', width: '320px' },
-      // Rodapé
-      { img: '3.png', top: '88%', left: '45%', width: '382px' }
-    ]
+    leftSlots: [{id:15, top:'15%', left:'12%', width:'28%'}, {id:16, top:'52%', left:'12%', width:'28%'}],
+    rightSlots: [{id:17, top:'12%', left:'15%', width:'28%'}, {id:18, top:'42%', left:'15%', width:'28%'}, {id:19, top:'72%', left:'15%', width:'28%'}],
+    leftDecos: [{img:'16.png', top:'10%', left:'55%', width:'180px'}, {img:'17.png', top:'80%', left:'60%', width:'160px'}],
+    rightDecos: [{img:'18.png', top:'5%', left:'65%', width:'150px'}, {img:'19.png', top:'50%', left:'65%', width:'170px'}, {img:'20.png', top:'80%', left:'55%', width:'140px'}]
   },
-  
-  // BRINDANDO (20-22) - BALANCEADO 1:2
-  {
-    name: 'BRINDANDO',
+  { 
+    name: 'BRINDANDO', 
     ids: [20, 21, 22],
-    // SLOTS CENTRALIZADOS
-    leftSlots: [
-      { id: 20, top: '36%', left: '18%', width: '30%' }
-    ],
-    rightSlots: [
-      { id: 21, top: '24%', left: '15%', width: '28%' },
-      { id: 22, top: '56%', left: '15%', width: '28%' }
-    ],
-    // MOLDURA ORGÂNICA
-    leftDecos: [
-      // Espaço superior
-      { img: '14.png', top: '8%', left: '60%', width: '367px' }
-    ],
-    rightDecos: [
-      // Rodapé
-      { img: '15.png', top: '88%', left: '50%', width: '343px' }
-    ]
+    leftSlots: [{id:20, top:'35%', left:'15%', width:'30%'}],
+    rightSlots: [{id:21, top:'15%', left:'15%', width:'30%'}, {id:22, top:'55%', left:'15%', width:'30%'}],
+    leftDecos: [{img:'21.png', top:'10%', left:'55%', width:'190px'}, {img:'22.png', top:'75%', left:'50%', width:'180px'}],
+    rightDecos: [{img:'23.png', top:'10%', left:'65%', width:'160px'}, {img:'24.png', top:'80%', left:'5%', width:'170px'}, {img:'25.png', top:'50%', left:'65%', width:'150px'}]
   },
-  
-  // SOFRENDO (23-25)
-  {
-    name: 'SOFRENDO',
+  { 
+    name: 'SOFRENDO', 
     ids: [23, 24, 25],
-    leftSlots: [
-      { id: 23, top: '28%', left: '8%', width: '25%' }
-    ],
-    rightSlots: [
-      { id: 24, top: '12%', left: '10%', width: '28%' },
-      { id: 25, top: '54%', left: '10%', width: '28%' }
-    ],
-    // SCRAPBOOK: 2 decos (30% maiores = 343px, 320px)
-    leftDecos: [
-      // Espaço acima slot #23
-      { img: '28.png', top: '10%', left: '60%', width: '343px' },
-      // Rodapé
-      { img: '27.png', top: '88%', left: '25%', width: '320px' }
-    ],
-    rightDecos: [
-      // Lateral direita
-      { img: '30.png', top: '15%', left: '75%', width: '343px' },
-      // Rodapé direita
-      { img: '29.png', top: '85%', left: '65%', width: '320px' }
-    ]
+    leftSlots: [{id:23, top:'15%', left:'15%', width:'30%'}, {id:24, top:'55%', left:'15%', width:'30%'}],
+    rightSlots: [{id:25, top:'35%', left:'15%', width:'30%'}],
+    leftDecos: [{img:'26.png', top:'8%', left:'60%', width:'180px'}, {img:'27.png', top:'82%', left:'60%', width:'170px'}],
+    rightDecos: [{img:'28.png', top:'10%', left:'65%', width:'160px'}, {img:'29.png', top:'80%', left:'5%', width:'150px'}]
   },
-  
-  // ESPECIAIS (26-29)
-  {
-    name: 'ESPECIAIS',
+  { 
+    name: 'ESPECIAIS', 
     ids: [26, 27, 28, 29],
-    leftSlots: [
-      { id: 26, top: '18%', left: '8%', width: '25%' },
-      { id: 27, top: '62%', left: '8%', width: '22%' }
-    ],
-    rightSlots: [
-      { id: 28, top: '12%', left: '10%', width: '28%' },
-      { id: 29, top: '54%', left: '10%', width: '28%' }
-    ],
-    // SCRAPBOOK: 2 decos (30% maiores = 320px, 359px)
-    leftDecos: [
-      // Entre título e slot #26
-      { img: '31.png', top: '8%', left: '55%', width: '320px' },
-      // Rodapé
-      { img: '32.png', top: '88%', left: '20%', width: '320px' }
-    ],
-    rightDecos: [
-      // Canto superior direito
-      { img: '34.png', top: '5%', left: '70%', width: '343px' },
-      // Rodapé direita
-      { img: '33.png', top: '85%', left: '60%', width: '359px' }
-    ]
+    leftSlots: [{id:26, top:'15%', left:'15%', width:'30%'}, {id:27, top:'55%', left:'15%', width:'30%'}],
+    rightSlots: [{id:28, top:'15%', left:'15%', width:'30%'}, {id:29, top:'55%', left:'15%', width:'30%'}],
+    leftDecos: [{img:'30.png', top:'8%', left:'60%', width:'180px'}, {img:'31.png', top:'78%', left:'55%', width:'160px'}],
+    rightDecos: [{img:'32.png', top:'10%', left:'65%', width:'170px'}, {img:'33.png', top:'60%', left:'65%', width:'150px'}, {img:'34.png', top:'82%', left:'5%', width:'180px'}]
   }
 ];
 
-// ==================== ESTADO GLOBAL ====================
 let allStickers = [];
-let inventory = JSON.parse(localStorage.getItem('album_v13_inv') || '[]');
-let glued = JSON.parse(localStorage.getItem('album_v13_glued') || '[]');
+let inventory = JSON.parse(localStorage.getItem('album_v14_inv') || '[]');
+let glued = JSON.parse(localStorage.getItem('album_v14_glued') || '[]');
 let currentPage = 0;
 let pending = [];
 
-// ==================== INICIALIZAÇÃO ====================
 async function init() {
   try {
     const res = await fetch(SHEET_URL);
     const txt = await res.text();
     const json = JSON.parse(txt.replace(/^[^(]+\(/, '').replace(/\);?\s*$/, ''));
-    
-    // Sanitização de URLs com .trim()
-    allStickers = json.table.rows
-      .filter(r => r.c[0]?.v != null)
-      .map(r => ({
-        id: Number(r.c[0].v),
-        theme: String(r.c[1]?.v || '').trim(),
-        url: String(r.c[2]?.v || '').trim(),
-        voucher: String(r.c[3]?.v || '').trim()
-      }));
-    
+    allStickers = json.table.rows.filter(r => r.c[0]?.v != null).map(r => ({
+      id: Number(r.c[0].v),
+      theme: String(r.c[1]?.v || '').trim(),
+      url: String(r.c[2]?.v || '').trim(),
+      voucher: String(r.c[3]?.v || '').trim()
+    }));
     document.getElementById('loading').classList.add('hide');
     document.getElementById('app').style.display = 'flex';
     renderPage();
-  } catch (e) {
-    console.error('Erro ao carregar planilha:', e);
-    document.getElementById('loading').innerHTML = 
-      `<div style="color:#dc3545;text-align:center;padding:50px;font-family:Arial,sans-serif">
-        <div style="font-size:3.5rem;margin-bottom:18px">⚠️</div>
-        <strong style="font-size:1.3rem">Erro ao carregar dados</strong><br><br>
-        <small style="color:#888">${e.message}</small><br><br>
-        <small style="color:#aaa">Verifique se a planilha está pública</small>
-      </div>`;
-  }
+  } catch (e) { console.error(e); }
 }
 
-// ==================== RENDERIZAÇÃO DE PÁGINA ====================
 function renderPage() {
   const page = PAGES[currentPage];
   const book = document.getElementById('book');
-  const leftPage = document.getElementById('page-left');
-  const rightPage = document.getElementById('page-right');
+  const left = document.getElementById('page-left');
+  const right = document.getElementById('page-right');
+
+  // Limpar
+  left.innerHTML = ''; right.innerHTML = '';
+  left.classList.remove('special-page-bg'); right.classList.remove('special-page-bg');
   
-  // Controlar modo capa (esconde lombada)
   if (currentPage === 0) {
     book.classList.add('cover-mode');
+    const cv = document.createElement('div');
+    cv.className = 'cover-page';
+    cv.innerHTML = `<div class="cover-title">29 Vezes Em<br>Que Eu Te Vi</div>`;
+    cv.style.cssText = 'position:absolute; inset:0; z-index:300; width:100%;';
+    book.appendChild(cv);
   } else {
     book.classList.remove('cover-mode');
+    const old = document.querySelector('.cover-page'); if(old) old.remove();
+    if (page.name === 'ESPECIAIS') { left.classList.add('special-page-bg'); right.classList.add('special-page-bg'); }
+    
+    // Título
+    const t = document.createElement('div'); t.className = 'page-title'; t.textContent = page.name;
+    t.style.cssText = 'font-family:LazyDog; font-size:3.5rem; margin-bottom:20px;';
+    left.appendChild(t);
+
+    // Decos e Slots
+    renderContent(left, page.leftSlots, page.leftDecos);
+    renderContent(right, page.rightSlots, page.rightDecos);
   }
-  
-  // Animação de saída
-  leftPage.style.opacity = '0';
-  rightPage.style.opacity = '0';
-  
-  setTimeout(() => {
-    leftPage.innerHTML = '';
-    rightPage.innerHTML = '';
-    
-    // Remover todas as classes especiais primeiro
-    leftPage.classList.remove('special-page-bg');
-    rightPage.classList.remove('special-page-bg');
-    
-    // Aplicar tema especial para ESPECIAIS
-    if (page.name === 'ESPECIAIS') {
-      leftPage.classList.add('special-page-bg');
-      rightPage.classList.add('special-page-bg');
-    }
-    
-    // CAPA (Page 0) - FRONT COVER ÚNICA E CENTRALIZADA
-    if (page.isCover) {
-      // Capa ocupa as duas páginas como um único elemento
-      const cover = document.createElement('div');
-      cover.className = 'cover-page';
-      cover.innerHTML = `
-        <span class="cover-star">⭐</span>
-        <span class="cover-star">💖</span>
-        <span class="cover-star">✨</span>
-        <span class="cover-star">❤️</span>
-        <div class="cover-title">29 vezes em<br>que eu te vi</div>
-      `;
-      
-      // Capa ocupa toda a área do livro (spans both pages)
-      cover.style.cssText = 'position: absolute; inset: 0; width: 100%; height: 100%; z-index: 100;';
-      
-      // Adiciona ao container do livro diretamente
-      document.getElementById('book').appendChild(cover);
-      
-      // Limpa as páginas individuais
-      leftPage.style.display = 'none';
-      rightPage.style.display = 'none';
-      
-      // Animação de entrada
-      setTimeout(() => {
-        leftPage.style.opacity = '1';
-        rightPage.style.opacity = '1';
-      }, 50);
-      
-      renderInventory();
-      return;
+  renderInventory();
+}
+
+function renderContent(container, slots, decos) {
+  decos.forEach(d => {
+    const dv = document.createElement('div'); dv.className = 'sticker-deco';
+    dv.style.cssText = `top:${d.top}; left:${d.left}; width:${d.width};`;
+    dv.innerHTML = `<img src="${d.img}">`;
+    container.appendChild(dv);
+  });
+  slots.forEach(s => {
+    const isGlued = glued.includes(s.id);
+    const sticker = allStickers.find(st => st.id === s.id);
+    const sl = document.createElement('div');
+    sl.className = 'slot' + (isGlued ? ' filled' : '') + (isGlued && s.id >= 26 ? ' special' : '');
+    sl.style.cssText = `top:${s.top}; left:${s.left}; width:${s.width};`;
+    if (isGlued && sticker) {
+      sl.innerHTML = `<img src="${sticker.url}">`;
     } else {
-      // Remove capa se existir
-      const existingCover = document.querySelector('.cover-page');
-      if (existingCover && existingCover.parentElement === document.getElementById('book')) {
-        existingCover.remove();
-      }
-      
-      // Restaura páginas normais
-      leftPage.style.display = 'block';
-      rightPage.style.display = 'block';
+      sl.textContent = s.id;
+      sl.onclick = () => { if(inventory.includes(s.id)) glue(s.id); };
     }
-    
-    // Título da página
-    const leftTitle = document.createElement('div');
-    leftTitle.className = 'page-title';
-    leftTitle.textContent = page.name;
-    leftPage.appendChild(leftTitle);
-    
-    // Decorações esquerda
-    page.leftDecos.forEach(deco => {
-      const div = document.createElement('div');
-      div.className = 'sticker-deco';
-      div.style.cssText = `top:${deco.top};left:${deco.left};width:${deco.width}`;
-      const img = document.createElement('img');
-      img.src = deco.img;
-      img.alt = '';
-      img.onerror = () => img.src = IMG_PLACEHOLDER;
-      div.appendChild(img);
-      leftPage.appendChild(div);
-    });
-    
-    // Slots esquerda
-    const leftSlots = document.createElement('div');
-    leftSlots.className = 'slots-container';
-    page.leftSlots.forEach(s => createSlot(leftSlots, s, page));
-    leftPage.appendChild(leftSlots);
-    
-    // Decorações direita
-    page.rightDecos.forEach(deco => {
-      const div = document.createElement('div');
-      div.className = 'sticker-deco';
-      div.style.cssText = `top:${deco.top};left:${deco.left};width:${deco.width}`;
-      const img = document.createElement('img');
-      img.src = deco.img;
-      img.alt = '';
-      img.onerror = () => img.src = IMG_PLACEHOLDER;
-      div.appendChild(img);
-      rightPage.appendChild(div);
-    });
-    
-    // Slots direita
-    const rightSlots = document.createElement('div');
-    rightSlots.className = 'slots-container';
-    page.rightSlots.forEach(s => createSlot(rightSlots, s, page));
-    rightPage.appendChild(rightSlots);
-    
-    // Animação de entrada
-    leftPage.style.opacity = '1';
-    rightPage.style.opacity = '1';
-    
-    renderInventory();
-  }, 200);
+    container.appendChild(sl);
+  });
 }
 
-// ==================== CRIAÇÃO DE SLOT (ASPECT RATIO RIGOROSO 2:3) ====================
-function createSlot(container, config, page) {
-  const sticker = allStickers.find(s => s.id === config.id);
-  const filled = glued.includes(config.id);
-  const isSpecial = page.name === 'ESPECIAIS';
-  
-  const slot = document.createElement('div');
-  slot.className = 'slot' + (filled ? ' filled' : '') + (filled && isSpecial ? ' special' : '');
-  slot.dataset.slotId = config.id;
-  // Aspect ratio 2:3 automático via CSS, width definido aqui
-  slot.style.cssText = `top:${config.top};left:${config.left};width:${config.width}`;
-  
-  if (filled && sticker?.url) {
-    const img = document.createElement('img');
-    img.src = sticker.url;
-    img.alt = `Figurinha ${config.id}`;
-    img.onerror = () => img.src = IMG_PLACEHOLDER;
-    slot.appendChild(img);
-  } else if (!filled) {
-    slot.textContent = config.id;
-    
-    slot.addEventListener('dragover', e => {
-      e.preventDefault();
-      slot.classList.add('drag-over');
-    });
-    slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
-    slot.addEventListener('drop', e => {
-      e.preventDefault();
-      slot.classList.remove('drag-over');
-      const draggedId = parseInt(e.dataTransfer.getData('stickerId'));
-      if (draggedId === config.id) glueSticker(config.id);
-    });
-    slot.addEventListener('click', () => {
-      if (inventory.includes(config.id)) glueSticker(config.id);
-    });
-  }
-  
-  container.appendChild(slot);
-}
-
-// ==================== RENDERIZAR INVENTÁRIO ====================
 function renderInventory() {
   const inv = document.getElementById('inventory');
-  inv.querySelectorAll('.inventory-card').forEach(c => c.remove());
+  inv.innerHTML = inventory.length ? '' : '<div style="text-align:center; padding:20px; color:#aaa;">Abra pacotes!</div>';
   
-  const empty = inv.querySelector('.inventory-empty');
-  if (inventory.length === 0) {
-    if (empty) empty.style.display = 'block';
-    return;
-  }
-  if (empty) empty.style.display = 'none';
-  
-  const counts = {};
-  inventory.forEach(id => counts[id] = (counts[id] || 0) + 1);
-  
-  // ORDENAÇÃO AUTOMÁTICA: Figurinhas aparecem em ordem crescente (1, 2, 3...)
-  const sortedUniqueIds = [...new Set(inventory)].sort((a, b) => a - b);
-  
-  sortedUniqueIds.forEach(id => {
-    const sticker = allStickers.find(s => s.id === id);
-    if (!sticker) return;
-    
+  // Ordenar por número
+  const sorted = [...new Set(inventory)].sort((a,b) => a-b);
+  sorted.forEach(id => {
+    const s = allStickers.find(st => st.id === id);
+    const count = inventory.filter(x => x === id).length;
     const card = document.createElement('div');
     card.className = 'inventory-card';
-    card.draggable = true;
-    
-    card.addEventListener('dragstart', e => {
-      e.dataTransfer.setData('stickerId', id);
-      card.classList.add('dragging');
-    });
-    card.addEventListener('dragend', () => card.classList.remove('dragging'));
-    
-    const thumb = document.createElement('div');
-    thumb.className = 'inventory-thumb';
-    const img = document.createElement('img');
-    img.src = sticker.url;
-    img.alt = `#${id}`;
-    img.onerror = () => img.src = IMG_PLACEHOLDER;
-    thumb.appendChild(img);
-    
-    const info = document.createElement('div');
-    info.className = 'inventory-info';
-    info.innerHTML = 
-      `<div class="inventory-number">#${id}${counts[id] > 1 ? ' ×'+counts[id] : ''}</div>
-       <div class="inventory-theme">${sticker.theme}</div>`;
-    
-    card.appendChild(thumb);
-    card.appendChild(info);
+    card.innerHTML = `
+      <img src="${s.url}" style="width:50px; height:50px; object-fit:contain; background:#f8f8f8; border-radius:4px;">
+      <div style="font-family:LazyDog; font-size:1.2rem;">#${id} ${count > 1 ? 'x'+count : ''}</div>
+    `;
+    card.onclick = () => {
+      // Tenta colar na página atual ou avisa
+      const currentPageSlots = [...PAGES[currentPage].leftSlots || [], ...PAGES[currentPage].rightSlots || []].map(x => x.id);
+      if (currentPageSlots.includes(id)) glue(id);
+      else alert(`Vá para a página do tema "${s.theme}" para colar esta!`);
+    };
     inv.appendChild(card);
   });
 }
 
-// ==================== COLAR FIGURINHA ====================
-function glueSticker(id) {
-  if (glued.includes(id)) return;
-  const idx = inventory.indexOf(id);
-  if (idx === -1) return;
-  
-  inventory.splice(idx, 1);
+function glue(id) {
+  inventory.splice(inventory.indexOf(id), 1);
   glued.push(id);
-  save();
-  renderPage();
-  
-  const page = PAGES[currentPage];
-  if (page.isCover) return;
-  
-  const allIds = [...page.leftSlots, ...page.rightSlots].map(s => s.id);
-  if (allIds.every(i => glued.includes(i))) {
-    setTimeout(showTrophy, 800);
-  }
+  save(); renderPage();
+  checkComplete();
 }
 
-// ==================== ABRIR PACOTE ====================
-function openPack() {
-  const env = document.getElementById('envelope');
-  env.classList.remove('tearing');
-  env.style.display = 'flex';
-  document.querySelector('.envelope-hint').style.display = 'block';
-  document.getElementById('reveal-cards').classList.remove('active');
-  document.getElementById('reveal-cards').innerHTML = '';
-  document.getElementById('btn-collect').classList.remove('active');
-  document.getElementById('pack-overlay').classList.add('active');
-}
-
-// ==================== RASGAR PACOTE ====================
+function openPack() { document.getElementById('pack-overlay').classList.add('active'); }
 function tearPack() {
-  const env = document.getElementById('envelope');
-  if (env.classList.contains('tearing')) return;
-  
-  const missing = allStickers.filter(s => !glued.includes(s.id) && !inventory.includes(s.id)).map(s => s.id);
-  const pool = missing.length ? missing : allStickers.map(s => s.id);
-  const copy = [...pool];
-  pending = [];
-  
-  for (let i = 0; i < 3; i++) {
-    if (copy.length === 0) break;
-    const r = Math.floor(Math.random() * copy.length);
-    pending.push(copy.splice(r, 1)[0]);
-  }
-  
-  env.classList.add('tearing');
-  document.querySelector('.envelope-hint').style.display = 'none';
-  
+  const env = document.getElementById('envelope'); env.classList.add('tearing');
   setTimeout(() => {
     env.style.display = 'none';
-    showReveal();
+    pending = [];
+    for(let i=0; i<3; i++) pending.push(allStickers[Math.floor(Math.random()*allStickers.length)].id);
+    const rev = document.getElementById('reveal-cards'); rev.innerHTML = '';
+    pending.forEach(id => {
+      const s = allStickers.find(st => st.id === id);
+      rev.innerHTML += `<div class="reveal-card ${id>=26?'special':''}"><div class="reveal-photo"><img src="${s.url}"></div>#${id}</div>`;
+    });
+    rev.classList.add('active');
+    document.getElementById('btn-collect').style.display = 'block';
   }, 600);
 }
 
-// ==================== REVELAR FIGURINHAS ====================
-function showReveal() {
-  const cards = document.getElementById('reveal-cards');
-  cards.innerHTML = '';
-  
-  pending.forEach(id => {
-    const sticker = allStickers.find(s => s.id === id);
-    if (!sticker) return;
-    
-    // Verifica se é ESPECIAL (IDs 26-29)
-    const isSpecial = id >= 26 && id <= 29;
-    
-    const card = document.createElement('div');
-    card.className = 'reveal-card' + (isSpecial ? ' special' : '');
-    
-    const photo = document.createElement('div');
-    photo.className = 'reveal-photo';
-    const img = document.createElement('img');
-    img.src = sticker.url;
-    img.alt = `#${id}`;
-    img.onerror = () => img.src = IMG_PLACEHOLDER;
-    photo.appendChild(img);
-    
-    const num = document.createElement('div');
-    num.className = 'reveal-number';
-    num.textContent = `#${id}` + (isSpecial ? ' ⭐' : '');
-    
-    card.appendChild(photo);
-    card.appendChild(num);
-    cards.appendChild(card);
-  });
-  
-  cards.classList.add('active');
-  document.getElementById('btn-collect').classList.add('active');
-}
-
-// ==================== COLETAR FIGURINHAS ====================
 function collect() {
-  pending.forEach(id => inventory.push(id));
-  save();
-  renderInventory();
+  inventory.push(...pending); save();
   document.getElementById('pack-overlay').classList.remove('active');
-  pending = [];
+  document.getElementById('envelope').classList.remove('tearing');
+  document.getElementById('envelope').style.display = 'flex';
+  document.getElementById('reveal-cards').classList.remove('active');
+  document.getElementById('btn-collect').style.display = 'none';
+  renderInventory();
 }
 
-// ==================== MOSTRAR TROFÉU ====================
-function showTrophy() {
-  const page = PAGES[currentPage];
-  const firstId = [...page.leftSlots, ...page.rightSlots][0].id;
-  const sticker = allStickers.find(s => s.id === firstId);
-  document.getElementById('trophy-msg').textContent = sticker?.voucher || '🎉 Parabéns! Página completa!';
-  document.getElementById('trophy-modal').classList.add('active');
-}
-
-// ==================== FECHAR TROFÉU ====================
-function closeTrophy() {
-  document.getElementById('trophy-modal').classList.remove('active');
-}
-
-// ==================== NAVEGAÇÃO ====================
-function navigate(dir) {
-  const newPage = currentPage + dir;
-  if (newPage >= 0 && newPage < PAGES.length) {
-    currentPage = newPage;
-    renderPage();
+function checkComplete() {
+  const p = PAGES[currentPage]; if(!p.ids.length) return;
+  if(p.ids.every(id => glued.includes(id))) {
+    const s = allStickers.find(st => st.id === p.ids[0]);
+    document.getElementById('trophy-msg').textContent = s.voucher || "Página completa!";
+    document.getElementById('trophy-modal').classList.add('active');
   }
 }
 
-// ==================== SALVAR ESTADO ====================
-function save() {
-  localStorage.setItem('album_v13_inv', JSON.stringify(inventory));
-  localStorage.setItem('album_v13_glued', JSON.stringify(glued));
+function closeTrophy() { document.getElementById('trophy-modal').classList.remove('active'); }
+function navigate(d) { let n = currentPage + d; if(n >= 0 && n < PAGES.length) { currentPage = n; renderPage(); } }
+function save() { localStorage.setItem('album_v14_inv', JSON.stringify(inventory)); localStorage.setItem('album_v14_glued', JSON.stringify(glued)); }
+function resetProgress() { if(confirm('Resetar álbum?')) { localStorage.clear(); location.reload(); } }
+function windowResize() { 
+  const scale = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+  document.getElementById('app').style.transform = `scale(${scale})`;
 }
 
-// ==================== RESETAR PROGRESSO ====================
-function resetProgress() {
-  if (confirm('Tem certeza que deseja resetar todo o progresso? Isso vai apagar todas as figurinhas e páginas completas.')) {
-    localStorage.removeItem('album_v13_inv');
-    localStorage.removeItem('album_v13_glued');
-    location.reload();
-  }
-}
-
-// ==================== INICIAR ====================
 window.addEventListener('load', init);
+window.addEventListener('resize', windowResize);
 </script>
 </body>
 </html>
