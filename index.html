@@ -82,6 +82,12 @@ body {
   z-index: 200;
   pointer-events: none;
   filter: blur(3px);
+  transition: opacity 0.4s ease;
+}
+
+/* Esconde lombada no modo capa para criar efeito de capa única contínua */
+#book.cover-mode::before {
+  opacity: 0;
 }
 
 .page {
@@ -132,6 +138,7 @@ body {
   border-radius: 8px;
   pointer-events: none;
   box-shadow: 
+    inset 0 0 0 2px rgba(255,215,0,0.3),
     inset 0 2px 12px rgba(0,0,0,.15),
     inset 0 -2px 12px rgba(0,0,0,.08),
     0 0 30px rgba(255,255,255,.2);
@@ -189,11 +196,12 @@ body {
   z-index: 3;
   padding: 40px;
   
-  /* Debossing effect melhorado (baixo relevo profundo) */
+  /* Debossing effect melhorado + destaque premium */
   text-shadow: 
     -2px -2px 3px rgba(255,255,255,.6),
     2px 2px 5px rgba(0,0,0,.4),
-    3px 3px 8px rgba(0,0,0,.3);
+    3px 3px 8px rgba(0,0,0,.3),
+    0 0 40px rgba(255,215,0,.3);
 }
 
 /* ==================== TÍTULO DA PÁGINA ==================== */
@@ -495,6 +503,26 @@ body {
 .nav-next {
   background: #10b981;
   border-bottom-color: #059669;
+}
+
+/* ==================== BOTÃO RESET (DISCRETO) ==================== */
+#btn-reset {
+  font-family: Arial, sans-serif;
+  font-size: 0.75rem;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #f5f5f5;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+#btn-reset:hover {
+  background: #ffebee;
+  color: #d32f2f;
+  border-color: #d32f2f;
 }
 
 /* ==================== ENVELOPE (GACHA) ==================== */
@@ -833,6 +861,7 @@ body {
       <button class="nav-btn nav-prev" onclick="navigate(-1)">← ANTERIOR</button>
       <button class="nav-btn nav-next" onclick="navigate(1)">PRÓXIMA →</button>
     </div>
+    <button id="btn-reset" onclick="resetProgress()">🔄 Resetar Progresso</button>
   </div>
 </div>
 
@@ -882,13 +911,13 @@ const PAGES = [
       { id: 4, top: '54%', left: '10%', width: '28%' }
     ],
     leftDecos: [
-      { img: '18.png', top: '8%', left: '48%', width: '220px' },
-      { img: '19.png', top: '68%', left: '42%', width: '210px' }
+      { img: '18.png', top: '5%', left: '50%', width: '264px' },
+      { img: '19.png', top: '70%', left: '48%', width: '252px' }
     ],
     rightDecos: [
-      { img: '20.png', top: '5%', left: '62%', width: '230px' },
-      { img: '21.png', top: '30%', left: '72%', width: '190px' },
-      { img: '22.png', top: '75%', left: '62%', width: '220px' }
+      { img: '20.png', top: '2%', left: '65%', width: '276px' },
+      { img: '21.png', top: '28%', left: '75%', width: '228px' },
+      { img: '22.png', top: '77%', left: '65%', width: '264px' }
     ]
   },
   
@@ -906,14 +935,14 @@ const PAGES = [
       { id: 9, top: '54%', left: '10%', width: '28%' }
     ],
     leftDecos: [
-      { img: '9.png', top: '10%', left: '48%', width: '220px' },
-      { img: '8.png', top: '32%', left: '56%', width: '205px' },
-      { img: '10.png', top: '62%', left: '48%', width: '215px' },
-      { img: '11.png', top: '82%', left: '42%', width: '225px' }
+      { img: '9.png', top: '8%', left: '50%', width: '264px' },
+      { img: '8.png', top: '30%', left: '58%', width: '246px' },
+      { img: '10.png', top: '64%', left: '50%', width: '258px' },
+      { img: '11.png', top: '84%', left: '48%', width: '270px' }
     ],
     rightDecos: [
-      { img: '12.png', top: '5%', left: '2%', width: '215px' },
-      { img: '13.png', top: '30%', left: '68%', width: '205px' }
+      { img: '12.png', top: '3%', left: '0%', width: '258px' },
+      { img: '13.png', top: '28%', left: '70%', width: '246px' }
     ]
   },
   
@@ -931,12 +960,12 @@ const PAGES = [
       { id: 14, top: '12%', left: '50%', width: '22%' }
     ],
     leftDecos: [
-      { img: '24.png', top: '10%', left: '50%', width: '220px' },
-      { img: '23.png', top: '68%', left: '42%', width: '205px' }
+      { img: '24.png', top: '8%', left: '52%', width: '264px' },
+      { img: '23.png', top: '70%', left: '48%', width: '246px' }
     ],
     rightDecos: [
-      { img: '25.png', top: '5%', left: '2%', width: '220px' },
-      { img: '26.png', top: '30%', left: '65%', width: '205px' }
+      { img: '25.png', top: '3%', left: '0%', width: '264px' },
+      { img: '26.png', top: '28%', left: '67%', width: '246px' }
     ]
   },
   
@@ -954,14 +983,14 @@ const PAGES = [
       { id: 19, top: '54%', left: '10%', width: '28%' }
     ],
     leftDecos: [
-      { img: '2.png', top: '8%', left: '50%', width: '235px' },
-      { img: '4.png', top: '50%', left: '2%', width: '215px' },
-      { img: '3.png', top: '82%', left: '8%', width: '245px' }
+      { img: '2.png', top: '5%', left: '52%', width: '282px' },
+      { img: '4.png', top: '52%', left: '0%', width: '258px' },
+      { img: '3.png', top: '84%', left: '8%', width: '294px' }
     ],
     rightDecos: [
-      { img: '7.png', top: '2%', left: '62%', width: '205px' },
-      { img: '6.png', top: '15%', left: '5%', width: '220px' },
-      { img: '5.png', top: '48%', left: '60%', width: '220px' }
+      { img: '7.png', top: '0%', left: '64%', width: '246px' },
+      { img: '6.png', top: '13%', left: '3%', width: '264px' },
+      { img: '5.png', top: '50%', left: '62%', width: '264px' }
     ]
   },
   
@@ -977,12 +1006,12 @@ const PAGES = [
       { id: 22, top: '54%', left: '10%', width: '28%' }
     ],
     leftDecos: [
-      { img: '14.png', top: '22%', left: '50%', width: '235px' },
-      { img: '15.png', top: '68%', left: '45%', width: '220px' }
+      { img: '14.png', top: '20%', left: '52%', width: '282px' },
+      { img: '15.png', top: '70%', left: '48%', width: '264px' }
     ],
     rightDecos: [
-      { img: '17.png', top: '15%', left: '65%', width: '205px' },
-      { img: '16.png', top: '65%', left: '62%', width: '205px' }
+      { img: '17.png', top: '13%', left: '67%', width: '246px' },
+      { img: '16.png', top: '67%', left: '64%', width: '246px' }
     ]
   },
   
@@ -998,12 +1027,12 @@ const PAGES = [
       { id: 25, top: '54%', left: '10%', width: '28%' }
     ],
     leftDecos: [
-      { img: '28.png', top: '18%', left: '52%', width: '220px' },
-      { img: '27.png', top: '70%', left: '45%', width: '205px' }
+      { img: '28.png', top: '16%', left: '54%', width: '264px' },
+      { img: '27.png', top: '72%', left: '48%', width: '246px' }
     ],
     rightDecos: [
-      { img: '30.png', top: '15%', left: '65%', width: '220px' },
-      { img: '29.png', top: '65%', left: '62%', width: '205px' }
+      { img: '30.png', top: '13%', left: '67%', width: '264px' },
+      { img: '29.png', top: '67%', left: '64%', width: '246px' }
     ]
   },
   
@@ -1020,12 +1049,12 @@ const PAGES = [
       { id: 29, top: '54%', left: '10%', width: '28%' }
     ],
     leftDecos: [
-      { img: '31.png', top: '10%', left: '50%', width: '205px' },
-      { img: '32.png', top: '68%', left: '45%', width: '205px' }
+      { img: '31.png', top: '8%', left: '52%', width: '246px' },
+      { img: '32.png', top: '70%', left: '48%', width: '246px' }
     ],
     rightDecos: [
-      { img: '34.png', top: '5%', left: '68%', width: '220px' },
-      { img: '33.png', top: '65%', left: '62%', width: '230px' }
+      { img: '34.png', top: '3%', left: '70%', width: '264px' },
+      { img: '33.png', top: '67%', left: '64%', width: '276px' }
     ]
   }
 ];
@@ -1072,8 +1101,16 @@ async function init() {
 // ==================== RENDERIZAÇÃO DE PÁGINA ====================
 function renderPage() {
   const page = PAGES[currentPage];
+  const book = document.getElementById('book');
   const leftPage = document.getElementById('page-left');
   const rightPage = document.getElementById('page-right');
+  
+  // Controlar modo capa (esconde lombada)
+  if (currentPage === 0) {
+    book.classList.add('cover-mode');
+  } else {
+    book.classList.remove('cover-mode');
+  }
   
   // Animação de saída
   leftPage.style.opacity = '0';
@@ -1243,7 +1280,10 @@ function renderInventory() {
   const counts = {};
   inventory.forEach(id => counts[id] = (counts[id] || 0) + 1);
   
-  [...new Set(inventory)].forEach(id => {
+  // ORDENAÇÃO AUTOMÁTICA: Figurinhas aparecem em ordem crescente (1, 2, 3...)
+  const sortedUniqueIds = [...new Set(inventory)].sort((a, b) => a - b);
+  
+  sortedUniqueIds.forEach(id => {
     const sticker = allStickers.find(s => s.id === id);
     if (!sticker) return;
     
@@ -1406,6 +1446,15 @@ function navigate(dir) {
 function save() {
   localStorage.setItem('album_v13_inv', JSON.stringify(inventory));
   localStorage.setItem('album_v13_glued', JSON.stringify(glued));
+}
+
+// ==================== RESETAR PROGRESSO ====================
+function resetProgress() {
+  if (confirm('Tem certeza que deseja resetar todo o progresso? Isso vai apagar todas as figurinhas e páginas completas.')) {
+    localStorage.removeItem('album_v13_inv');
+    localStorage.removeItem('album_v13_glued');
+    location.reload();
+  }
 }
 
 // ==================== INICIAR ====================
