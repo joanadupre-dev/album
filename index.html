@@ -103,14 +103,14 @@ body {
   background: radial-gradient(circle, #1a1a2e 0%, #000 100%);
 }
 
-/* ==================== CAPA (PAGE 0) ==================== */
+/* ==================== CAPA (PAGE 0) - CONTAINER ÚNICO CENTRALIZADO ==================== */
 .cover-page {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #ffecd2 100%);
   position: relative;
   overflow: hidden;
 }
@@ -123,6 +123,38 @@ body {
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
 }
 
+/* Moldura física interna */
+.cover-page::after {
+  content: '';
+  position: absolute;
+  inset: 30px;
+  border: 10px solid rgba(255,255,255,0.3);
+  border-radius: 8px;
+  pointer-events: none;
+  box-shadow: 
+    inset 0 2px 8px rgba(0,0,0,.1),
+    inset 0 -2px 8px rgba(0,0,0,.05);
+}
+
+/* Estrelinhas decorativas nos cantos */
+.cover-star {
+  position: absolute;
+  font-size: 2rem;
+  opacity: 0.4;
+  z-index: 2;
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+.cover-star:nth-child(1) { top: 60px; left: 60px; animation-delay: 0s; }
+.cover-star:nth-child(2) { top: 60px; right: 60px; animation-delay: 0.5s; }
+.cover-star:nth-child(3) { bottom: 60px; left: 60px; animation-delay: 1s; }
+.cover-star:nth-child(4) { bottom: 60px; right: 60px; animation-delay: 1.5s; }
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.2); }
+}
+
 .cover-title {
   font-family: 'LazyDog', cursive;
   font-size: 4.5rem;
@@ -130,7 +162,7 @@ body {
   text-align: center;
   color: #fff;
   position: relative;
-  z-index: 1;
+  z-index: 3;
   padding: 30px;
   
   /* Debossing effect (baixo relevo) */
@@ -580,6 +612,35 @@ body {
   border: 3px solid #e8dcc8;
 }
 
+/* CARTA ESPECIAL COM BRILHO DOURADO */
+.reveal-card.special {
+  background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 45%, #b38728 70%, #fbf5b7 100%);
+  border-color: #d4af37;
+  box-shadow: 
+    0 0 30px rgba(191,149,63,.8),
+    0 24px 60px rgba(0,0,0,.5);
+  animation: card-pop-special 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.reveal-card.special .reveal-number {
+  color: #8b6914;
+  font-weight: bold;
+  text-shadow: 0 1px 3px rgba(255,255,255,.5);
+}
+
+@keyframes card-pop-special {
+  from { 
+    transform: scale(0) rotate(-16deg); 
+    opacity: 0;
+    filter: brightness(2);
+  }
+  to { 
+    transform: scale(1) rotate(0); 
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
 .reveal-card:nth-child(2) { animation-delay: 0.2s; }
 .reveal-card:nth-child(3) { animation-delay: 0.4s; }
 
@@ -1007,23 +1068,47 @@ function renderPage() {
       rightPage.classList.add('special-page-bg');
     }
     
-    // CAPA (Page 0)
+    // CAPA (Page 0) - CONTAINER ÚNICO CENTRALIZADO
     if (page.isCover) {
+      // Capa ocupa as duas páginas como um único elemento
       const cover = document.createElement('div');
       cover.className = 'cover-page';
-      cover.innerHTML = '<div class="cover-title">29 vezes em<br>que eu te vi</div>';
-      leftPage.appendChild(cover);
+      cover.innerHTML = `
+        <span class="cover-star">✨</span>
+        <span class="cover-star">✨</span>
+        <span class="cover-star">✨</span>
+        <span class="cover-star">✨</span>
+        <div class="cover-title">29 vezes em<br>que eu te vi</div>
+      `;
       
-      const rightCover = document.createElement('div');
-      rightCover.className = 'cover-page';
-      rightPage.appendChild(rightCover);
+      // Capa ocupa toda a área do livro (spans both pages)
+      cover.style.cssText = 'position: absolute; inset: 0; width: 100%; height: 100%;';
+      
+      // Adiciona ao container do livro diretamente
+      document.getElementById('book').appendChild(cover);
+      
+      // Limpa as páginas individuais
+      leftPage.style.display = 'none';
+      rightPage.style.display = 'none';
       
       // Animação de entrada
-      leftPage.style.opacity = '1';
-      rightPage.style.opacity = '1';
+      setTimeout(() => {
+        leftPage.style.opacity = '1';
+        rightPage.style.opacity = '1';
+      }, 50);
       
       renderInventory();
       return;
+    } else {
+      // Remove capa se existir
+      const existingCover = document.querySelector('.cover-page');
+      if (existingCover && existingCover.parentElement === document.getElementById('book')) {
+        existingCover.remove();
+      }
+      
+      // Restaura páginas normais
+      leftPage.style.display = 'block';
+      rightPage.style.display = 'block';
     }
     
     // Título da página
@@ -1233,8 +1318,11 @@ function showReveal() {
     const sticker = allStickers.find(s => s.id === id);
     if (!sticker) return;
     
+    // Verifica se é ESPECIAL (IDs 26-29)
+    const isSpecial = id >= 26 && id <= 29;
+    
     const card = document.createElement('div');
-    card.className = 'reveal-card';
+    card.className = 'reveal-card' + (isSpecial ? ' special' : '');
     
     const photo = document.createElement('div');
     photo.className = 'reveal-photo';
@@ -1246,7 +1334,7 @@ function showReveal() {
     
     const num = document.createElement('div');
     num.className = 'reveal-number';
-    num.textContent = `#${id}`;
+    num.textContent = `#${id}` + (isSpecial ? ' ⭐' : '');
     
     card.appendChild(photo);
     card.appendChild(num);
