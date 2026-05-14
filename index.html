@@ -67,13 +67,13 @@ body.special-theme {
   background-size: 200px 200px, 180px 180px;
 }
 
-/* Efeito 3D da lombada */
+/* Efeito 3D da lombada com sombra interna na dobra */
 #book::before {
   content: '';
   position: absolute;
   left: 50%;
-  top: -15px;
-  bottom: -15px;
+  top: 0;
+  bottom: 0;
   width: 60px;
   transform: translateX(-50%);
   background: linear-gradient(to right, 
@@ -83,6 +83,7 @@ body.special-theme {
     rgba(0,0,0,.1) 80%,
     rgba(0,0,0,0) 100%
   );
+  box-shadow: inset 0 0 30px rgba(0,0,0,.15);
   z-index: 200;
   pointer-events: none;
   filter: blur(3px);
@@ -95,11 +96,22 @@ body.special-theme {
   padding: 40px 45px;
   background: #fdfbf7;
   transform-style: preserve-3d;
-  transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: opacity 0.4s ease, transform 0.4s ease;
   
   /* Textura grain */
   background-image: 
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+/* Animação de entrada da página */
+.page.page-enter {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.page.page-enter-active {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 /* ==================== CAPA (PAGE 0) ==================== */
@@ -176,7 +188,7 @@ body.special-theme {
 
 .slot {
   position: absolute;
-  aspect-ratio: 2 / 3; /* Padronização vertical rigorosa */
+  aspect-ratio: 2 / 3; /* Verticalidade total forçada */
   background: #f5ebe0;
   border: 3px solid #e3d5c3;
   border-radius: 4px;
@@ -211,11 +223,11 @@ body.special-theme {
   border-color: #e8e8e8;
 }
 
+/* REGRA DOS 50% - Imagem ocupa 50% e flutua no centro */
 .slot.filled img {
-  width: 100%;
-  height: 100%;
+  width: 50%;
+  height: 50%;
   object-fit: contain;
-  padding: 12px; /* Respiro visual centralizado */
 }
 
 /* Efeito holográfico para ESPECIAIS */
@@ -452,7 +464,7 @@ body.special-theme {
 .envelope {
   width: 240px;
   height: 320px;
-  background: linear-gradient(145deg, #7c3aed 0%, #a855f7 100%);
+  background: linear-gradient(145deg, #d8b5ff 0%, #b794f6 100%);
   border-radius: 16px;
   display: flex;
   flex-direction: column;
@@ -464,7 +476,14 @@ body.special-theme {
   animation: envelope-float 3s ease-in-out infinite;
   position: relative;
   overflow: hidden;
-  border: 3px solid rgba(255,255,255,.2);
+  border: 3px solid rgba(255,255,255,.3);
+  
+  /* Bordas serrilhadas sutis */
+  clip-path: polygon(
+    0% 3%, 5% 0%, 10% 3%, 15% 0%, 20% 3%, 25% 0%, 30% 3%, 35% 0%, 40% 3%, 45% 0%, 50% 3%,
+    55% 0%, 60% 3%, 65% 0%, 70% 3%, 75% 0%, 80% 3%, 85% 0%, 90% 3%, 95% 0%, 100% 3%,
+    100% 100%, 0% 100%
+  );
 }
 
 /* Shimmer effect no hover */
@@ -504,7 +523,7 @@ body.special-theme {
 }
 
 .envelope-icon {
-  font-size: 4rem;
+  font-size: 5rem;
   position: relative;
   z-index: 1;
   text-shadow: 0 4px 8px rgba(0,0,0,.3);
@@ -737,7 +756,7 @@ body.special-theme {
 
 <div id="pack-overlay">
   <div class="envelope" id="envelope" onclick="tearPack()">
-    <span class="envelope-icon">🎴</span>
+    <span class="envelope-icon">❤️</span>
     <span class="envelope-text">NOVO<br>PACOTE</span>
   </div>
   <div class="envelope-hint">Clique para rasgar</div>
@@ -967,76 +986,90 @@ function renderPage() {
   const leftPage = document.getElementById('page-left');
   const rightPage = document.getElementById('page-right');
   
-  leftPage.innerHTML = '';
-  rightPage.innerHTML = '';
+  // Animação de saída
+  leftPage.style.opacity = '0';
+  rightPage.style.opacity = '0';
   
-  // Aplicar tema especial para ESPECIAIS
-  if (page.name === 'ESPECIAIS') {
-    document.body.classList.add('special-theme');
-  } else {
-    document.body.classList.remove('special-theme');
-  }
-  
-  // CAPA (Page 0)
-  if (page.isCover) {
-    const cover = document.createElement('div');
-    cover.className = 'cover-page';
-    cover.innerHTML = '<div class="cover-title">29 vezes em<br>que eu te vi</div>';
-    leftPage.appendChild(cover);
+  setTimeout(() => {
+    leftPage.innerHTML = '';
+    rightPage.innerHTML = '';
     
-    const rightCover = document.createElement('div');
-    rightCover.className = 'cover-page';
-    rightPage.appendChild(rightCover);
+    // Aplicar tema especial para ESPECIAIS
+    if (page.name === 'ESPECIAIS') {
+      document.body.classList.add('special-theme');
+    } else {
+      document.body.classList.remove('special-theme');
+    }
+    
+    // CAPA (Page 0)
+    if (page.isCover) {
+      const cover = document.createElement('div');
+      cover.className = 'cover-page';
+      cover.innerHTML = '<div class="cover-title">29 vezes em<br>que eu te vi</div>';
+      leftPage.appendChild(cover);
+      
+      const rightCover = document.createElement('div');
+      rightCover.className = 'cover-page';
+      rightPage.appendChild(rightCover);
+      
+      // Animação de entrada
+      leftPage.style.opacity = '1';
+      rightPage.style.opacity = '1';
+      
+      renderInventory();
+      return;
+    }
+    
+    // Título da página
+    const leftTitle = document.createElement('div');
+    leftTitle.className = 'page-title';
+    leftTitle.textContent = page.name;
+    leftPage.appendChild(leftTitle);
+    
+    // Decorações esquerda
+    page.leftDecos.forEach(deco => {
+      const div = document.createElement('div');
+      div.className = 'sticker-deco';
+      div.style.cssText = `top:${deco.top};left:${deco.left};width:${deco.width}`;
+      const img = document.createElement('img');
+      img.src = deco.img;
+      img.alt = '';
+      img.onerror = () => img.src = IMG_PLACEHOLDER; // Placeholder em caso de erro
+      div.appendChild(img);
+      leftPage.appendChild(div);
+    });
+    
+    // Slots esquerda
+    const leftSlots = document.createElement('div');
+    leftSlots.className = 'slots-container';
+    page.leftSlots.forEach(s => createSlot(leftSlots, s, page));
+    leftPage.appendChild(leftSlots);
+    
+    // Decorações direita
+    page.rightDecos.forEach(deco => {
+      const div = document.createElement('div');
+      div.className = 'sticker-deco';
+      div.style.cssText = `top:${deco.top};left:${deco.left};width:${deco.width}`;
+      const img = document.createElement('img');
+      img.src = deco.img;
+      img.alt = '';
+      img.onerror = () => img.src = IMG_PLACEHOLDER;
+      div.appendChild(img);
+      rightPage.appendChild(div);
+    });
+    
+    // Slots direita
+    const rightSlots = document.createElement('div');
+    rightSlots.className = 'slots-container';
+    page.rightSlots.forEach(s => createSlot(rightSlots, s, page));
+    rightPage.appendChild(rightSlots);
+    
+    // Animação de entrada
+    leftPage.style.opacity = '1';
+    rightPage.style.opacity = '1';
     
     renderInventory();
-    return;
-  }
-  
-  // Título da página
-  const leftTitle = document.createElement('div');
-  leftTitle.className = 'page-title';
-  leftTitle.textContent = page.name;
-  leftPage.appendChild(leftTitle);
-  
-  // Decorações esquerda
-  page.leftDecos.forEach(deco => {
-    const div = document.createElement('div');
-    div.className = 'sticker-deco';
-    div.style.cssText = `top:${deco.top};left:${deco.left};width:${deco.width}`;
-    const img = document.createElement('img');
-    img.src = deco.img;
-    img.alt = '';
-    img.onerror = () => img.src = IMG_PLACEHOLDER; // Placeholder em caso de erro
-    div.appendChild(img);
-    leftPage.appendChild(div);
-  });
-  
-  // Slots esquerda
-  const leftSlots = document.createElement('div');
-  leftSlots.className = 'slots-container';
-  page.leftSlots.forEach(s => createSlot(leftSlots, s, page));
-  leftPage.appendChild(leftSlots);
-  
-  // Decorações direita
-  page.rightDecos.forEach(deco => {
-    const div = document.createElement('div');
-    div.className = 'sticker-deco';
-    div.style.cssText = `top:${deco.top};left:${deco.left};width:${deco.width}`;
-    const img = document.createElement('img');
-    img.src = deco.img;
-    img.alt = '';
-    img.onerror = () => img.src = IMG_PLACEHOLDER;
-    div.appendChild(img);
-    rightPage.appendChild(div);
-  });
-  
-  // Slots direita
-  const rightSlots = document.createElement('div');
-  rightSlots.className = 'slots-container';
-  page.rightSlots.forEach(s => createSlot(rightSlots, s, page));
-  rightPage.appendChild(rightSlots);
-  
-  renderInventory();
+  }, 200);
 }
 
 // ==================== CRIAÇÃO DE SLOT (ASPECT RATIO RIGOROSO) ====================
