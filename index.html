@@ -871,71 +871,173 @@ const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tq
 // Placeholder para imagens quebradas
 const IMG_PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23f5ebe0' width='100' height='100'/%3E%3Ctext x='50' y='60' font-size='50' text-anchor='middle' fill='%23ccc'%3E%3F%3C/text%3E%3C/svg%3E";
 
-// ==================== PAGES - LÓGICA SIMÉTRICA BLINDADA ====================
+// ==================== PAGES - MAPEAMENTO CORRETO E ANTI-VAZAMENTO ====================
 const PAGES = [
-  { name: 'CAPA', ids: [], isCover: true },
-  
-  // COMENDO (1-4) - 2 Slots Esq, 2 Slots Dir
+  // CAPA
   {
-    name: 'COMENDO', ids: [1, 2, 3, 4],
-    leftSlots:  [{id: 1, top: '15%', left: '15%', width: '28%'}, {id: 2, top: '55%', left: '15%', width: '28%'}],
-    rightSlots: [{id: 3, top: '15%', left: '55%', width: '28%'}, {id: 4, top: '55%', left: '55%', width: '28%'}],
-    leftDecos:  [{img: '1.png', top: '20%', left: '60%', width: '150px'}, {img: '2.png', top: '60%', left: '60%', width: '150px'}],
-    rightDecos: [{img: '3.png', top: '10%', left: '15%', width: '150px'}, {img: '4.png', top: '45%', left: '15%', width: '150px'}, {img: '5.png', top: '75%', left: '15%', width: '150px'}]
+    name: 'CAPA',
+    ids: [],
+    isCover: true
   },
   
-  // BRINCANDO (5-9) - 2 Slots Esq, 3 Slots Dir
+  // COMENDO (1-4) - PNGs: 18 a 22
   {
-    name: 'BRINCANDO', ids: [5, 6, 7, 8, 9],
-    leftSlots:  [{id: 5, top: '15%', left: '15%', width: '28%'}, {id: 6, top: '55%', left: '15%', width: '28%'}],
-    rightSlots: [{id: 7, top: '10%', left: '55%', width: '28%'}, {id: 8, top: '42%', left: '55%', width: '28%'}, {id: 9, top: '75%', left: '55%', width: '28%'}],
-    leftDecos:  [{img: '6.png', top: '20%', left: '60%', width: '150px'}, {img: '7.png', top: '60%', left: '60%', width: '150px'}],
-    rightDecos: [{img: '8.png', top: '15%', left: '15%', width: '150px'}, {img: '9.png', top: '45%', left: '15%', width: '150px'}, {img: '10.png', top: '75%', left: '15%', width: '150px'}]
+    name: 'COMENDO',
+    ids: [1, 2, 3, 4],
+    leftSlots: [
+      { id: 1, top: '15%', left: '15%', width: '28%' },
+      { id: 2, top: '55%', left: '15%', width: '28%' }
+    ],
+    rightSlots: [
+      { id: 3, top: '15%', left: '15%', width: '28%' },
+      { id: 4, top: '55%', left: '15%', width: '28%' }
+    ],
+    leftDecos: [
+      { img: '18.png', top: '15%', left: '60%', width: '150px' },
+      { img: '19.png', top: '65%', left: '60%', width: '150px' }
+    ],
+    rightDecos: [
+      { img: '20.png', top: '10%', left: '60%', width: '150px' },
+      { img: '21.png', top: '45%', left: '60%', width: '150px' },
+      { img: '22.png', top: '75%', left: '60%', width: '150px' }
+    ]
   },
   
-  // CUIDANDO (10-14) - 3 Slots Esq, 2 Slots Dir
+  // BRINCANDO (5-9) - PNGs: 8 a 13 (Arrumado o vazamento: 3 slots em zigue-zague na direita)
   {
-    name: 'CUIDANDO', ids: [10, 11, 12, 13, 14],
-    leftSlots:  [{id: 10, top: '10%', left: '15%', width: '28%'}, {id: 11, top: '42%', left: '15%', width: '28%'}, {id: 12, top: '75%', left: '15%', width: '28%'}],
-    rightSlots: [{id: 13, top: '15%', left: '55%', width: '28%'}, {id: 14, top: '55%', left: '55%', width: '28%'}],
-    leftDecos:  [{img: '11.png', top: '15%', left: '60%', width: '150px'}, {img: '12.png', top: '45%', left: '60%', width: '150px'}, {img: '13.png', top: '75%', left: '60%', width: '150px'}],
-    rightDecos: [{img: '14.png', top: '20%', left: '15%', width: '150px'}, {img: '15.png', top: '60%', left: '15%', width: '150px'}]
+    name: 'BRINCANDO',
+    ids: [5, 6, 7, 8, 9],
+    leftSlots: [
+      { id: 5, top: '15%', left: '15%', width: '28%' },
+      { id: 6, top: '55%', left: '15%', width: '28%' }
+    ],
+    rightSlots: [
+      { id: 7, top: '12%', left: '12%', width: '26%' },
+      { id: 8, top: '54%', left: '12%', width: '26%' },
+      { id: 9, top: '33%', left: '55%', width: '26%' } // Slot movido pro lado pra não vazar embaixo!
+    ],
+    leftDecos: [
+      { img: '8.png', top: '15%', left: '60%', width: '150px' },
+      { img: '9.png', top: '45%', left: '60%', width: '150px' },
+      { img: '10.png', top: '75%', left: '60%', width: '150px' }
+    ],
+    rightDecos: [
+      { img: '11.png', top: '8%', left: '65%', width: '150px' },
+      { img: '12.png', top: '75%', left: '65%', width: '150px' },
+      { img: '13.png', top: '85%', left: '15%', width: '130px' }
+    ]
   },
   
-  // EXPLORANDO (15-19) - 2 Slots Esq, 3 Slots Dir
+  // CUIDANDO (10-14) - PNGs: 23 a 26 (Arrumado o vazamento: 3 slots em zigue-zague na esquerda)
   {
-    name: 'EXPLORANDO', ids: [15, 16, 17, 18, 19],
-    leftSlots:  [{id: 15, top: '15%', left: '15%', width: '28%'}, {id: 16, top: '55%', left: '15%', width: '28%'}],
-    rightSlots: [{id: 17, top: '10%', left: '55%', width: '28%'}, {id: 18, top: '42%', left: '55%', width: '28%'}, {id: 19, top: '75%', left: '55%', width: '28%'}],
-    leftDecos:  [{img: '16.png', top: '20%', left: '60%', width: '150px'}, {img: '17.png', top: '60%', left: '60%', width: '150px'}],
-    rightDecos: [{img: '18.png', top: '15%', left: '15%', width: '150px'}, {img: '19.png', top: '45%', left: '15%', width: '150px'}, {img: '20.png', top: '75%', left: '15%', width: '150px'}]
+    name: 'CUIDANDO',
+    ids: [10, 11, 12, 13, 14],
+    leftSlots: [
+      { id: 10, top: '12%', left: '12%', width: '26%' },
+      { id: 11, top: '54%', left: '12%', width: '26%' },
+      { id: 12, top: '33%', left: '55%', width: '26%' } // Slot movido pro lado pra não vazar embaixo!
+    ],
+    rightSlots: [
+      { id: 13, top: '15%', left: '15%', width: '28%' },
+      { id: 14, top: '55%', left: '15%', width: '28%' }
+    ],
+    leftDecos: [
+      { img: '23.png', top: '8%', left: '65%', width: '150px' },
+      { img: '24.png', top: '75%', left: '65%', width: '150px' }
+    ],
+    rightDecos: [
+      { img: '25.png', top: '20%', left: '60%', width: '150px' },
+      { img: '26.png', top: '65%', left: '60%', width: '150px' }
+    ]
   },
   
-  // BRINDANDO (20-22) - 1 Slot Esq, 2 Slots Dir
+  // EXPLORANDO (15-19) - PNGs: 2 a 7 (Arrumado o vazamento: 3 slots em zigue-zague na direita)
   {
-    name: 'BRINDANDO', ids: [20, 21, 22],
-    leftSlots:  [{id: 20, top: '35%', left: '15%', width: '28%'}],
-    rightSlots: [{id: 21, top: '15%', left: '55%', width: '28%'}, {id: 22, top: '55%', left: '55%', width: '28%'}],
-    leftDecos:  [{img: '21.png', top: '15%', left: '60%', width: '150px'}, {img: '22.png', top: '45%', left: '60%', width: '150px'}, {img: '23.png', top: '75%', left: '60%', width: '150px'}],
-    rightDecos: [{img: '24.png', top: '20%', left: '15%', width: '150px'}, {img: '25.png', top: '60%', left: '15%', width: '150px'}]
+    name: 'EXPLORANDO',
+    ids: [15, 16, 17, 18, 19],
+    leftSlots: [
+      { id: 15, top: '15%', left: '15%', width: '28%' },
+      { id: 16, top: '55%', left: '15%', width: '28%' }
+    ],
+    rightSlots: [
+      { id: 17, top: '12%', left: '12%', width: '26%' },
+      { id: 18, top: '54%', left: '12%', width: '26%' },
+      { id: 19, top: '33%', left: '55%', width: '26%' } // Slot movido pro lado pra não vazar embaixo!
+    ],
+    leftDecos: [
+      { img: '2.png', top: '10%', left: '60%', width: '150px' },
+      { img: '3.png', top: '45%', left: '60%', width: '150px' },
+      { img: '4.png', top: '75%', left: '60%', width: '150px' }
+    ],
+    rightDecos: [
+      { img: '5.png', top: '8%', left: '65%', width: '150px' },
+      { img: '6.png', top: '75%', left: '65%', width: '150px' },
+      { img: '7.png', top: '85%', left: '15%', width: '130px' }
+    ]
   },
   
-  // SOFRENDO (23-25) - 2 Slots Esq, 1 Slot Dir
+  // BRINDANDO (20-22) - PNGs: 14 a 17
   {
-    name: 'SOFRENDO', ids: [23, 24, 25],
-    leftSlots:  [{id: 23, top: '15%', left: '15%', width: '28%'}, {id: 24, top: '55%', left: '15%', width: '28%'}],
-    rightSlots: [{id: 25, top: '35%', left: '55%', width: '28%'}],
-    leftDecos:  [{img: '26.png', top: '20%', left: '60%', width: '150px'}, {img: '27.png', top: '60%', left: '60%', width: '150px'}],
-    rightDecos: [{img: '28.png', top: '15%', left: '15%', width: '150px'}, {img: '29.png', top: '45%', left: '15%', width: '150px'}, {img: '30.png', top: '75%', left: '15%', width: '150px'}]
+    name: 'BRINDANDO',
+    ids: [20, 21, 22],
+    leftSlots: [
+      { id: 20, top: '35%', left: '15%', width: '28%' }
+    ],
+    rightSlots: [
+      { id: 21, top: '15%', left: '15%', width: '28%' },
+      { id: 22, top: '55%', left: '15%', width: '28%' }
+    ],
+    leftDecos: [
+      { img: '14.png', top: '15%', left: '60%', width: '150px' },
+      { img: '15.png', top: '65%', left: '60%', width: '150px' }
+    ],
+    rightDecos: [
+      { img: '16.png', top: '20%', left: '60%', width: '150px' },
+      { img: '17.png', top: '65%', left: '60%', width: '150px' }
+    ]
   },
   
-  // ESPECIAIS (26-29) - 2 Slots Esq, 2 Slots Dir
+  // SOFRENDO (23-25) - PNGs: 27 a 30
   {
-    name: 'ESPECIAIS', ids: [26, 27, 28, 29],
-    leftSlots:  [{id: 26, top: '15%', left: '15%', width: '28%'}, {id: 27, top: '55%', left: '15%', width: '28%'}],
-    rightSlots: [{id: 28, top: '15%', left: '55%', width: '28%'}, {id: 29, top: '55%', left: '55%', width: '28%'}],
-    leftDecos:  [{img: '31.png', top: '20%', left: '60%', width: '150px'}, {img: '32.png', top: '60%', left: '60%', width: '150px'}],
-    rightDecos: [{img: '33.png', top: '20%', left: '15%', width: '150px'}, {img: '34.png', top: '60%', left: '15%', width: '150px'}]
+    name: 'SOFRENDO',
+    ids: [23, 24, 25],
+    leftSlots: [
+      { id: 23, top: '15%', left: '15%', width: '28%' },
+      { id: 24, top: '55%', left: '15%', width: '28%' }
+    ],
+    rightSlots: [
+      { id: 25, top: '35%', left: '15%', width: '28%' }
+    ],
+    leftDecos: [
+      { img: '27.png', top: '20%', left: '60%', width: '150px' },
+      { img: '28.png', top: '65%', left: '60%', width: '150px' }
+    ],
+    rightDecos: [
+      { img: '29.png', top: '15%', left: '60%', width: '150px' },
+      { img: '30.png', top: '65%', left: '60%', width: '150px' }
+    ]
+  },
+  
+  // ESPECIAIS (26-29) - PNGs: 31 a 34
+  {
+    name: 'ESPECIAIS',
+    ids: [26, 27, 28, 29],
+    leftSlots: [
+      { id: 26, top: '15%', left: '15%', width: '28%' },
+      { id: 27, top: '55%', left: '15%', width: '28%' }
+    ],
+    rightSlots: [
+      { id: 28, top: '15%', left: '15%', width: '28%' },
+      { id: 29, top: '55%', left: '15%', width: '28%' }
+    ],
+    leftDecos: [
+      { img: '31.png', top: '20%', left: '60%', width: '150px' },
+      { img: '32.png', top: '65%', left: '60%', width: '150px' }
+    ],
+    rightDecos: [
+      { img: '33.png', top: '20%', left: '60%', width: '150px' },
+      { img: '34.png', top: '65%', left: '60%', width: '150px' }
+    ]
   }
 ];
 
